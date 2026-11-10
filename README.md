@@ -64,6 +64,43 @@ La solution permet de structurer les projets, appliquer différents profils de p
 
 ---
 
+## Aperçu de l'application
+
+### Dashboard
+
+![Dashboard](resources/images/dashboard.png)
+
+Vue synthétique des indicateurs clés, statistiques et estimations récentes.
+
+### Estimation
+
+![Estimation](resources/images/estimation.png)
+
+Calcul des charges, durées et coûts selon le profil et le scénario sélectionnés.
+
+### Projets
+
+![Projets](resources/images/projects.png)
+
+Gestion centralisée des projets et des informations client.
+
+### Profils
+
+![Profils](resources/images/profiles.png)
+
+Configuration des profils Junior, Senior et Expert.
+
+### Scénarios
+
+![Scénarios](resources/images/scenarios.png)
+
+Gestion des scénarios Optimiste, Réaliste et Pessimiste.
+
+### Rapports
+
+![Rapports](resources/images/reports.png)
+
+Historique des estimations avec export PDF et Excel.
 ## Technologies
 
 - Python 3.11+
