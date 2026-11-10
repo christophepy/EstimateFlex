@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "estimateflex"
+version = "1.0.0"
+description = "Application d'estimation d'effort, coûts et délais pour études industrielles."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+authors = [
+    { name = "Christophe" }
+]
+
+keywords = [
+    "estimation",
+    "engineering",
+    "project-management",
+    "pyqt6",
+    "cost-estimation"
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+exclude = [
+    "__pycache__",
+    ".ruff_cache",
+    ".pytest_cache",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "UP",
+    "SIM",
+]
+
+ignore = [
+    "BLE001",
+    "DTZ005",
+]
+
+[tool.pytest.ini_options]
+
+testpaths = [
+    "tests"
+]
+
+python_files = [
+    "test_*.py"
+]
+
+addopts = "-v"
+
+[tool.coverage.run]
+
+source = [
+    "src"
+]
+
+omit = [
+    "tests/*"
+]
+
+[tool.coverage.report]
+
+show_missing = true
+skip_covered = true

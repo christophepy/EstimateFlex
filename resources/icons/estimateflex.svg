@@ -1,0 +1,75 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <linearGradient id="chartGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#22C55E"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect
+      x="20"
+      y="20"
+      width="472"
+      height="472"
+      rx="90"
+      fill="url(#bgGradient)"
+  />
+
+  <!-- Chart Bars -->
+  <rect x="110" y="270" width="45" height="110" rx="12"
+        fill="url(#chartGradient)"/>
+
+  <rect x="185" y="220" width="45" height="160" rx="12"
+        fill="url(#chartGradient)"/>
+
+  <rect x="260" y="170" width="45" height="210" rx="12"
+        fill="url(#chartGradient)"/>
+
+  <rect x="335" y="110" width="45" height="270" rx="12"
+        fill="url(#chartGradient)"/>
+
+  <!-- Estimation Curve -->
+  <polyline
+      points="130,250 205,200 280,145 355,90"
+      fill="none"
+      stroke="#F8FAFC"
+      stroke-width="18"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+  />
+
+  <!-- Nodes -->
+  <circle cx="130" cy="250" r="12" fill="#F8FAFC"/>
+  <circle cx="205" cy="200" r="12" fill="#F8FAFC"/>
+  <circle cx="280" cy="145" r="12" fill="#F8FAFC"/>
+  <circle cx="355" cy="90" r="12" fill="#F8FAFC"/>
+
+  <!-- Center Symbol -->
+  <circle
+      cx="256"
+      cy="410"
+      r="40"
+      fill="#F8FAFC"
+      opacity="0.95"
+  />
+
+  <path
+      d="M245 385
+         L225 415
+         H250
+         L240 440
+         L287 402
+         H262
+         L275 380 Z"
+      fill="#2563EB"
+  />
+
+</svg>
+

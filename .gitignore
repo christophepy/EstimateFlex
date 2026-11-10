@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.env/
+.envrc
+
+# IDE
+.vscode/
+.idea/
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Linters
+.ruff_cache/
+.mypy_cache/
+.pylint.d/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# PyInstaller
+*.spec.bak
+
+# Logs
+*.log
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Runtime project data
+data/projects/*.json
+!data/.gitkeep
+!data/projects/.gitkeep
+
+# Generated exports
+exports/pdf/*
+exports/excel/*
+!exports/pdf/.gitkeep
+!exports/excel/.gitkeep
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Backup / temp
+*.bak
+*.tmp
+*.temp
