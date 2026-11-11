@@ -24,7 +24,7 @@ class ProfileService:
     # CRUD
     # =========================================================
 
-    def create_profile(self, profile: UserProfile) -> UserProfile:
+    def create_profile(self, profile: UserProfile) -> int:
         """
         Crée un nouveau profil.
         """
@@ -39,7 +39,7 @@ class ProfileService:
 
         return self.repository.create(profile)
 
-    def update_profile(self, profile: UserProfile) -> UserProfile:
+    def update_profile(self, profile: UserProfile) -> bool:
         """
         Met à jour un profil existant.
         """
@@ -93,43 +93,21 @@ class ProfileService:
     # =========================================================
 
     def get_default_profile(self) -> UserProfile | None:
-        """
-        Retourne le profil par défaut.
-        """
-
         profiles = self.repository.get_all()
 
-        for profile in profiles:
-            if getattr(profile, "is_default", False):
-                return profile
+        if not profiles:
+            return None
 
-        return None
+        return profiles[0]
 
-    def set_default_profile(self, profile_id: int) -> bool:
+    def set_default_profile(
+        self,
+        profile_id: int,
+    ) -> bool:
         """
-        Définit le profil par défaut.
+        Fonction conservée pour compatibilité.
+        V1 : aucun profil par défaut configurable.
         """
-
-        profiles = self.repository.get_all()
-
-        target = None
-
-        for profile in profiles:
-
-            if getattr(profile, "is_default", False):
-                profile.is_default = False
-                self.repository.update(profile)
-
-            if profile.id == profile_id:
-                target = profile
-
-        if target is None:
-            raise ValueError(f"Profil introuvable : {profile_id}")
-
-        target.is_default = True
-
-        self.repository.update(target)
-
         return True
 
     # =========================================================
@@ -161,7 +139,7 @@ class ProfileService:
     # Fonctions métier
     # =========================================================
 
-    def duplicate_profile(self, profile_id: int, new_nom: str) -> UserProfile:
+    def duplicate_profile(self, profile_id: int, new_nom: str) -> int:
         """
         Duplique un profil existant.
         """

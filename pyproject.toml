@@ -80,3 +80,10 @@ omit = [
 
 show_missing = true
 skip_covered = true
+
+[[tool.mypy.overrides]]
+module = [
+    "reportlab.*",
+    "openpyxl.*"
+]
+ignore_missing_imports = true

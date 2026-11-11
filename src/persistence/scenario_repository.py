@@ -253,12 +253,17 @@ class ScenarioRepository:
 
         scenario = ScenarioRepository.get_by_id(scenario_id)
 
+        if scenario is None:
+            return False
+
         if scenario.nom in {
             "Optimiste",
             "Réaliste",
             "Pessimiste",
         }:
-            raise ValueError("Les scénarios système ne peuvent pas être supprimés.")
+            raise ValueError(
+                "Les scénarios système ne peuvent pas être supprimés."
+            )
 
         if ScenarioRepository.is_used(scenario_id):
             raise ValueError(

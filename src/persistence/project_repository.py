@@ -181,7 +181,7 @@ class ProjectRepository:
         Retourne tous les projets.
         """
 
-        projects = []
+        projects: list[Project] = []
 
         for file in sorted(self.storage_dir.glob("*.json")):
 

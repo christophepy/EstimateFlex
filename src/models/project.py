@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 
+from .deliverables import Deliverables
 from .project_parameters import ProjectParameters
+from .review_metrics import ReviewMetrics
 
 
 @dataclass(slots=True)
@@ -20,6 +22,6 @@ class Project:
 
     parameters: ProjectParameters = field(default_factory=ProjectParameters)
 
-    deliverables: list[str] = field(default_factory=list)
+    deliverables: Deliverables = field(default_factory=Deliverables)
 
-    reviews: dict = field(default_factory=dict)
+    reviews: ReviewMetrics = field(default_factory=ReviewMetrics)
