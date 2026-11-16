@@ -80,6 +80,67 @@ Première version publique stable d'EstimateFlex.
 
 ---
 
+# [2.1a] - 2026-11-16
+
+Évolution du système de paramètres utilisateur et du Dashboard.
+
+## Ajouté
+
+### Paramètres
+
+- Gestion de la devise de travail (EUR, USD, CHF, GBP).
+- Gestion du répertoire d'exports configurable.
+- Ajout des paramètres d'affichage du Dashboard.
+- Persistance des préférences utilisateur.
+
+### Dashboard
+
+- Ajout de l'option « Afficher les KPI Dashboard ».
+- Ajout de l'option « Afficher les graphiques Dashboard ».
+- Masquage dynamique du bloc « Indicateurs clés ».
+- Masquage dynamique du graphique « Estimations par scénario ».
+- Masquage dynamique du graphique « Répartition des coûts ».
+- Actualisation automatique du Dashboard après modification des paramètres.
+
+## Amélioré
+
+### Multi-devises
+
+- Conversion automatique des montants selon la devise sélectionnée.
+- Mise à jour dynamique des montants affichés dans le Dashboard.
+- Mise à jour dynamique des montants affichés dans les Reports.
+- Centralisation de la gestion des devises via CurrencyService.
+
+### Interface
+
+- Rechargement immédiat des paramètres sans redémarrage de l'application.
+- Synchronisation automatique des onglets après modification des paramètres.
+- Amélioration de la gestion des paramètres absents pour assurer la compatibilité avec les anciennes versions.
+
+## Corrigé
+
+- Correction de plusieurs problèmes d'actualisation du Dashboard.
+- Correction de l'affichage des devises dans les rapports.
+- Correction du rafraîchissement des valeurs après changement de paramètres.
+- Correction de la compatibilité avec les anciens fichiers settings.json.
+
+## Tests
+
+- Ajout des tests unitaires des paramètres Dashboard.
+- Vérification des valeurs par défaut des options d'affichage.
+- Vérification de la sérialisation des paramètres Dashboard.
+- Vérification du chargement des paramètres Dashboard.
+- Vérification de la compatibilité avec les anciens fichiers settings.json.
+
+### Résultats
+
+- 136 tests exécutés.
+- 136 tests réussis.
+- 0 échec.
+- 0 erreur.
+
+---
+
 ## Roadmap V2
 
 ### Prévu

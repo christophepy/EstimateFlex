@@ -225,6 +225,8 @@ class Database:
                 estimated_days REAL,
                 estimated_cost REAL,
 
+                currency TEXT DEFAULT 'EUR',
+
                 risk_factor REAL,
 
                 created_at TEXT
@@ -244,15 +246,29 @@ class Database:
             cursor.execute("""
                 ALTER TABLE estimations
                 ADD COLUMN estimation_nom TEXT
-                """)
+            """)
 
             cursor.execute("""
                 UPDATE estimations
                 SET estimation_nom =
                     project_nom || '_' || scenario_nom
                 WHERE estimation_nom IS NULL
-                   OR estimation_nom = ''
-                """)
+                OR estimation_nom = ''
+            """)
+
+        if "currency" not in columns:
+
+            cursor.execute("""
+                ALTER TABLE estimations
+                ADD COLUMN currency TEXT DEFAULT 'EUR'
+            """)
+
+            cursor.execute("""
+                UPDATE estimations
+                SET currency = 'EUR'
+                WHERE currency IS NULL
+                OR currency = ''
+            """)
 
         conn.commit()
         conn.close()

@@ -21,6 +21,10 @@ from PyQt6.QtWidgets import (
 
 from src.services.excel_export_service import ExcelExportService
 from src.services.pdf_export_service import PdfExportService
+from src.utils.formatters import (
+    format_currency,
+    format_number,
+)
 
 
 class NumericTableWidgetItem(QTableWidgetItem):
@@ -40,9 +44,17 @@ class ReportsTab(QWidget):
     def __init__(
         self,
         estimation_repository,
+        settings_service,
+        currency_service,
         parent=None,
     ):
         super().__init__(parent)
+
+        self.estimation_repository = estimation_repository
+
+        self.settings_service = settings_service
+        self.settings = self.settings_service.get()
+        self.currency_service = currency_service
 
         self.estimation_repository = estimation_repository
         self.pdf_export_service = PdfExportService()
@@ -183,6 +195,8 @@ class ReportsTab(QWidget):
 
     def load_reports(self):
 
+        self.settings = self.settings_service.get()
+
         self.reports_table.setRowCount(0)
         self.reports_table.setCurrentCell(-1, -1)
 
@@ -199,47 +213,85 @@ class ReportsTab(QWidget):
             for row, report in enumerate(reports):
 
                 item = QTableWidgetItem(str(report.estimation_nom))
-
                 item.setData(Qt.ItemDataRole.UserRole, report.id)
 
                 self.reports_table.setItem(row, 0, item)
 
                 self.reports_table.setItem(
-                    row, 1, QTableWidgetItem(str(report.project_nom))
+                    row,
+                    1,
+                    QTableWidgetItem(str(report.project_nom)),
                 )
 
                 self.reports_table.setItem(
-                    row, 2, QTableWidgetItem(str(report.scenario_nom))
+                    row,
+                    2,
+                    QTableWidgetItem(str(report.scenario_nom)),
                 )
 
-                hours_item = NumericTableWidgetItem(f"{report.estimated_hours:.2f}")
-
-                hours_item.setData(Qt.ItemDataRole.UserRole, report.estimated_hours)
-
-                self.reports_table.setItem(row, 3, hours_item)
-
-                days_item = NumericTableWidgetItem(f"{report.estimated_days:.2f}")
-
-                days_item.setData(Qt.ItemDataRole.UserRole, report.estimated_days)
-
-                self.reports_table.setItem(row, 4, days_item)
-
-                cost_item = NumericTableWidgetItem(
-                    f"{report.estimated_cost:.2f}".replace(",", " ")
+                hours_item = NumericTableWidgetItem(
+                    format_number(report.estimated_hours)
                 )
 
-                cost_item.setData(Qt.ItemDataRole.UserRole, report.estimated_cost)
-
-                self.reports_table.setItem(row, 5, cost_item)
-
-                risk_item = NumericTableWidgetItem(f"{report.risk_factor:.2f}")
-
-                risk_item.setData(Qt.ItemDataRole.UserRole, report.risk_factor)
-
-                self.reports_table.setItem(row, 6, risk_item)
+                hours_item.setData(
+                    Qt.ItemDataRole.UserRole,
+                    report.estimated_hours,
+                )
 
                 self.reports_table.setItem(
-                    row, 7, QTableWidgetItem(str(report.created_at))
+                    row,
+                    3,
+                    hours_item,
+                )
+
+                days_item = NumericTableWidgetItem(format_number(report.estimated_days))
+
+                days_item.setData(
+                    Qt.ItemDataRole.UserRole,
+                    report.estimated_days,
+                )
+
+                self.reports_table.setItem(
+                    row,
+                    4,
+                    days_item,
+                )
+
+                display_cost = self.currency_service.convert(
+                    report.estimated_cost,
+                    self.settings.currency,
+                )
+
+                cost_item = NumericTableWidgetItem(format_number(display_cost))
+
+                cost_item.setData(
+                    Qt.ItemDataRole.UserRole,
+                    display_cost,
+                )
+
+                self.reports_table.setItem(
+                    row,
+                    5,
+                    cost_item,
+                )
+
+                risk_item = NumericTableWidgetItem(format_number(report.risk_factor))
+
+                risk_item.setData(
+                    Qt.ItemDataRole.UserRole,
+                    report.risk_factor,
+                )
+
+                self.reports_table.setItem(
+                    row,
+                    6,
+                    risk_item,
+                )
+
+                self.reports_table.setItem(
+                    row,
+                    7,
+                    QTableWidgetItem(str(report.created_at)),
                 )
 
             self.reports_table.resizeColumnsToContents()
@@ -248,7 +300,9 @@ class ReportsTab(QWidget):
         except Exception as exc:
 
             QMessageBox.warning(
-                self, "Reports", f"Impossible de charger les rapports :\n{exc}"
+                self,
+                "Reports",
+                f"Impossible de charger les rapports :\n{exc}",
             )
 
     # =====================================================================
@@ -288,6 +342,13 @@ class ReportsTab(QWidget):
         if report is None:
             return
 
+        self.settings = self.settings_service.get()
+
+        display_cost = self.currency_service.convert(
+            report.estimated_cost,
+            self.settings.currency,
+        )
+
         self.lbl_name.setText(str(report.estimation_nom))
 
         self.lbl_project.setText(str(report.project_nom))
@@ -295,13 +356,13 @@ class ReportsTab(QWidget):
         self.lbl_scenario.setText(str(report.scenario_nom))
 
         self.lbl_budget.setText(
-            f"{report.estimated_hours:.2f} h | "
-            f"{report.estimated_days:.2f} j | "
-            f"{report.estimated_cost:.2f}".replace(",", " ") + " €"
+            f"{format_number(report.estimated_hours)} h | "
+            f"{format_number(report.estimated_days)} j | "
+            f"{format_currency(display_cost, self.settings.currency)}"
         )
 
         self.lbl_date.setText(
-            f"Risque : {report.risk_factor:.2f} | " f"{report.created_at}"
+            f"Risque : {format_number(report.risk_factor)} | " f"{report.created_at}"
         )
 
     # =====================================================================
@@ -322,10 +383,11 @@ class ReportsTab(QWidget):
                 f"Nom : {report.estimation_nom}\n\n"
                 f"Projet : {report.project_nom}\n"
                 f"Scénario : {report.scenario_nom}\n\n"
-                f"Heures : {report.estimated_hours:.2f}\n"
-                f"Jours : {report.estimated_days:.2f}\n"
-                f"Coût : {report.estimated_cost:.2f}".replace(",", " ") + " €\n"
-                f"Risque : {report.risk_factor:.2f}\n\n"
+                f"Heures : {format_number(report.estimated_hours)}\n"
+                f"Jours : {format_number(report.estimated_days)}\n"
+                f"Coût : "
+                f"{format_currency(report.estimated_cost, self.settings.currency)}\n"
+                f"Risque : {format_number(report.risk_factor)}\n\n"
                 f"Créée le :\n"
                 f"{report.created_at}"
             ),
@@ -405,15 +467,28 @@ class ReportsTab(QWidget):
 
         try:
 
-            export_dir = Path("exports/pdf")
-            export_dir.mkdir(parents=True, exist_ok=True)
+            settings = self.settings_service.get()
+
+            base_dir = Path(settings.export_directory)
+
+            export_dir = base_dir / "pdf"
+
+            export_dir.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
             file_path = export_dir / f"{report.estimation_nom}.pdf"
 
-            output = PdfExportService.export(report, str(file_path))
+            output = PdfExportService.export(
+                report,
+                str(file_path),
+            )
 
             QMessageBox.information(
-                self, "Export PDF", ("PDF exporté :\n\n" f"{output}")
+                self,
+                "Export PDF",
+                f"PDF exporté :\n\n{output}",
             )
 
         except Exception as exc:
@@ -436,9 +511,16 @@ class ReportsTab(QWidget):
 
         try:
 
-            export_dir = Path("exports/excel")
+            settings = self.settings_service.get()
 
-            export_dir.mkdir(parents=True, exist_ok=True)
+            base_dir = Path(settings.export_directory)
+
+            export_dir = base_dir / "excel"
+
+            export_dir.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
             file_path = export_dir / f"{report.estimation_nom}.xlsx"
 
@@ -456,9 +538,14 @@ class ReportsTab(QWidget):
 
         try:
 
-            exports_dir = Path("exports")
+            settings = self.settings_service.get()
 
-            exports_dir.mkdir(parents=True, exist_ok=True)
+            exports_dir = Path(settings.export_directory)
+
+            exports_dir.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
             if os.name == "nt":
 
@@ -475,3 +562,9 @@ class ReportsTab(QWidget):
                 "Erreur",
                 ("Impossible d'ouvrir le " "dossier exports.\n\n" f"{exc}"),
             )
+
+    def refresh(self):
+
+        self.settings = self.settings_service.get()
+
+        self.load_reports()

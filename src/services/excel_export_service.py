@@ -13,11 +13,20 @@ from openpyxl.styles import (
     Side,
 )
 
+from src.utils.formatters import (
+    format_currency,
+    format_number,
+)
+
 
 class ExcelExportService:
 
     @staticmethod
-    def export(report, file_path: str) -> Path:
+    def export(
+        report,
+        file_path: str,
+        currency: str = "EUR",
+    ) -> Path:
         """
         Exporte un rapport d'estimation au format Excel.
         """
@@ -46,9 +55,7 @@ class ExcelExportService:
 
         date_only = str(report.created_at)[:10]
 
-        formatted_cost = f"{report.estimated_cost:,.2f}".replace(",", " ").replace(
-            ".", ","
-        )
+        formatted_cost = format_currency(report.estimated_cost, report.currency)
 
         # ==================================================
         # TITRE
@@ -88,10 +95,10 @@ class ExcelExportService:
             ["Nom", str(report.estimation_nom)],
             ["Projet", str(report.project_nom)],
             ["Scénario", str(report.scenario_nom)],
-            ["Charge (h)", f"{report.estimated_hours:.2f} h"],
-            ["Durée (j)", f"{report.estimated_days:.2f} j"],
-            ["Coût (€)", f"{formatted_cost} €"],
-            ["Facteur de risque", f"{report.risk_factor:.2f}"],
+            ["Charge (h)", f"{format_number(report.estimated_hours)} h"],
+            ["Durée (j)", f"{format_number(report.estimated_days)} j"],
+            [f"Coût ({currency})", f"{formatted_cost} {currency}"],
+            ["Facteur de risque", format_number(report.risk_factor)],
             ["Date", date_only],
         ]
 

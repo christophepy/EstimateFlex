@@ -1,0 +1,14 @@
+{
+    "currency": "EUR",
+    "exchange_rates": {
+        "EUR": 1.0,
+        "USD": 1.08,
+        "CHF": 0.94,
+        "GBP": 0.86
+    },
+    "export_directory": "C:/Users/yanni/env311/your_app/export",
+    "theme": "light",
+    "font_size": 10,
+    "show_dashboard_kpis": true,
+    "show_dashboard_charts": false
+}

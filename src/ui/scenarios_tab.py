@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
 
 from src.services.scenario_service import ScenarioService
 from src.ui.scenario_dialog import ScenarioDialog
+from src.utils.formatters import format_number
 
 
 class ScenariosTab(QWidget):
@@ -140,19 +141,19 @@ class ScenariosTab(QWidget):
                 self.table.setItem(
                     row,
                     1,
-                    QTableWidgetItem(f"{scenario.facteur_productivite:.2f}"),
+                    QTableWidgetItem(format_number(scenario.facteur_productivite)),
                 )
 
                 self.table.setItem(
                     row,
                     2,
-                    QTableWidgetItem(f"{scenario.facteur_risque:.2f}"),
+                    QTableWidgetItem(format_number(scenario.facteur_risque)),
                 )
 
                 self.table.setItem(
                     row,
                     3,
-                    QTableWidgetItem(f"{scenario.facteur_disponibilite:.2f}"),
+                    QTableWidgetItem(format_number(scenario.facteur_disponibilite)),
                 )
 
                 self.table.setItem(
@@ -290,13 +291,14 @@ class ScenariosTab(QWidget):
         details.append("")
 
         details.append(
-            f"Facteur productivité : " f"{scenario.facteur_productivite:.2f}"
+            f"Facteur productivité : " f"{format_number(scenario.facteur_productivite)}"
         )
 
-        details.append(f"Facteur risque : " f"{scenario.facteur_risque:.2f}")
+        details.append(f"Facteur risque : " f"{format_number(scenario.facteur_risque)}")
 
         details.append(
-            f"Facteur disponibilité : " f"{scenario.facteur_disponibilite:.2f}"
+            f"Facteur disponibilité : "
+            f"{format_number(scenario.facteur_disponibilite)}"
         )
 
         details.append("")

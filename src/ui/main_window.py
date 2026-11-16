@@ -11,6 +11,8 @@ from PyQt6.QtWidgets import (
 )
 
 from src.persistence.estimation_repository import EstimationRepository
+from src.services.currency_service import CurrencyService
+from src.services.settings_service import SettingsService
 
 # Tabs
 from src.ui.dashboard_tab import DashboardTab
@@ -19,6 +21,7 @@ from src.ui.profiles_tab import ProfilesTab
 from src.ui.projects_tab import ProjectsTab
 from src.ui.reports_tab import ReportsTab
 from src.ui.scenarios_tab import ScenariosTab
+from src.ui.settings_dialog import SettingsDialog
 
 
 class MainWindow(QMainWindow):
@@ -26,10 +29,20 @@ class MainWindow(QMainWindow):
     Fenêtre principale EstimateFlex
     """
 
-    def __init__(self):
+    def __init__(
+        self,
+        settings_service: SettingsService,
+        currency_service: CurrencyService,
+    ):
         super().__init__()
 
-        self.setWindowTitle("EstimateFlex v1.0")
+        self.settings_service = settings_service
+        self.currency_service = currency_service
+
+        self.settings = self.settings_service.get()
+
+        self.setWindowTitle("EstimateFlex v2.1a")
+
         self.resize(1600, 900)
 
         self.estimation_repository = EstimationRepository()
@@ -54,15 +67,22 @@ class MainWindow(QMainWindow):
 
         self.projects_tab = ProjectsTab()
 
-        self.profiles_tab = ProfilesTab()
+        self.profiles_tab = ProfilesTab(self.settings_service)
 
-        self.estimation_tab = EstimationTab()
+        self.estimation_tab = EstimationTab(self.settings_service)
 
         self.scenarios_tab = ScenariosTab()
 
-        self.reports_tab = ReportsTab(self.estimation_repository)
+        self.reports_tab = ReportsTab(
+            self.estimation_repository,
+            self.settings_service,
+            self.currency_service,
+        )
 
-        self.dashboard_tab = DashboardTab(self.estimation_repository)
+        self.dashboard_tab = DashboardTab(
+            self.estimation_repository,
+            self.settings_service,
+        )
 
         self.tabs.addTab(self.projects_tab, "📁 Projects")
 
@@ -130,6 +150,15 @@ class MainWindow(QMainWindow):
         reports_menu.addAction(action_export_pdf)
 
         reports_menu.addAction(action_export_excel)
+
+        # ---------- TOOLS ---------
+
+        tools_menu = menubar.addMenu("Outils")
+
+        settings_action = QAction("Paramètres", self)
+        settings_action.triggered.connect(self.show_settings)
+
+        tools_menu.addAction(settings_action)
 
         # ---------- HELP ----------
 
@@ -221,6 +250,40 @@ class MainWindow(QMainWindow):
             except Exception as exc:
 
                 print(f"Erreur refresh " f"{type(widget).__name__} : " f"{exc}")
+
+    def show_settings(self):
+
+        dialog = SettingsDialog(
+            self.settings_service,
+            self,
+        )
+
+        if dialog.exec():
+            self.reload_settings()
+
+    def reload_settings(self):
+        """
+        Recharge les paramètres.
+        """
+
+        self.settings = self.settings_service.get()
+
+        self.setWindowTitle("EstimateFlex v2.1a")
+
+        self.profiles_tab.settings = self.settings
+        self.estimation_tab.settings = self.settings
+
+        if hasattr(self.reports_tab, "settings"):
+            self.reports_tab.settings = self.settings
+
+        if hasattr(self.dashboard_tab, "settings"):
+            self.dashboard_tab.settings = self.settings
+
+        self.profiles_tab.refresh()
+        self.estimation_tab.refresh()
+
+        self.reports_tab.refresh()
+        self.dashboard_tab.refresh()
 
     # ==========================================================
     # EVENTS

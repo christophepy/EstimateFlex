@@ -1,10 +1,5 @@
-# Point d'entrée de l'application
-# Initialise l'environnement
-# Charge la configuration
-# Lance PyQt
-# Crée MainWindow v1.0
 """
-EstimateFlex v1.0
+EstimateFlex v2.1a
 Point d'entrée principal
 """
 
@@ -18,17 +13,21 @@ from PyQt6.QtWidgets import QApplication, QMessageBox
 
 from src.config.paths import EnsureDirectories
 from src.persistence.database import Database
+from src.persistence.settings_repository import SettingsRepository
+from src.services.currency_service import CurrencyService
+from src.services.settings_service import SettingsService
 from src.ui.main_window import MainWindow
 
 APP_NAME = "EstimateFlex"
-APP_VERSION = "1.0"
+APP_VERSION = "2.1a"
 
 
 def configure_logging() -> None:
     """Configure le système de logs."""
 
     logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s"
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s",
     )
 
 
@@ -53,12 +52,20 @@ def handle_exception(exc_type, exc_value, exc_traceback):
     """
 
     error_message = "".join(
-        traceback.format_exception(exc_type, exc_value, exc_traceback)
+        traceback.format_exception(
+            exc_type,
+            exc_value,
+            exc_traceback,
+        )
     )
 
     logging.error(error_message)
 
-    QMessageBox.critical(None, "Erreur critique", str(exc_value))
+    QMessageBox.critical(
+        None,
+        "Erreur critique",
+        str(exc_value),
+    )
 
 
 def main() -> int:
@@ -83,7 +90,19 @@ def main() -> int:
     app.setApplicationName(APP_NAME)
     app.setApplicationVersion(APP_VERSION)
 
-    window = MainWindow()
+    # Paramètres application
+    settings_repository = SettingsRepository()
+    settings_service = SettingsService(settings_repository)
+
+    # Service devises
+    currency_service = CurrencyService(settings_service)
+
+    # Fenêtre principale
+    window = MainWindow(
+        settings_service=settings_service,
+        currency_service=currency_service,
+    )
+
     window.show()
 
     logging.info("Interface chargée")

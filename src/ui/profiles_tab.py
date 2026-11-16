@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
 
 from src.services.profile_service import ProfileService
 from src.ui.profile_dialog import ProfileDialog
+from src.utils.formatters import format_number
 
 
 class ProfilesTab(QWidget):
@@ -22,8 +23,15 @@ class ProfilesTab(QWidget):
     Onglet de gestion des profils utilisateurs.
     """
 
-    def __init__(self, parent=None):
+    def __init__(
+        self,
+        settings_service,
+        parent=None,
+    ):
         super().__init__(parent)
+
+        self.settings_service = settings_service
+        self.settings = self.settings_service.get()
 
         self.profile_service = ProfileService()
 
@@ -58,8 +66,8 @@ class ProfilesTab(QWidget):
         self.profile_table.setHorizontalHeaderLabels(
             [
                 "Nom",
-                "TJM €",
-                "€/h",
+                f"TJM {self.settings.currency}",
+                f"{self.settings.currency}/h",
                 "H/J",
                 "Prod",
                 "Ligne",
@@ -180,6 +188,8 @@ class ProfilesTab(QWidget):
 
             profiles = self.profile_service.get_all_profiles()
 
+            rate = self.settings.exchange_rates.get(self.settings.currency, 1.0)
+
             ordre = {
                 "Junior": 1,
                 "Senior": 2,
@@ -202,10 +212,10 @@ class ProfilesTab(QWidget):
 
                 self.profile_table.insertRow(row)
 
+                tjm = profile.taux_journalier * rate
+
                 cout_horaire = (
-                    profile.taux_journalier / profile.heures_par_jour
-                    if profile.heures_par_jour > 0
-                    else 0
+                    tjm / profile.heures_par_jour if profile.heures_par_jour > 0 else 0
                 )
 
                 item_nom = QTableWidgetItem(profile.nom)
@@ -215,16 +225,34 @@ class ProfilesTab(QWidget):
                 self.profile_table.setItem(row, 0, item_nom)
 
                 self.profile_table.setItem(
-                    row, 1, centered_item(f"{profile.taux_journalier:.0f}")
+                    row,
+                    1,
+                    centered_item(
+                        format_number(
+                            tjm,
+                            0,
+                        )
+                    ),
                 )
-
-                self.profile_table.setItem(row, 2, centered_item(f"{cout_horaire:.2f}"))
 
                 self.profile_table.setItem(
-                    row, 3, centered_item(f"{profile.heures_par_jour:.1f}")
+                    row, 2, centered_item(format_number(cout_horaire))
                 )
 
-                item_prod = QTableWidgetItem(f"{profile.facteur_productivite:.2f}")
+                self.profile_table.setItem(
+                    row,
+                    3,
+                    centered_item(
+                        format_number(
+                            profile.heures_par_jour,
+                            1,
+                        )
+                    ),
+                )
+
+                item_prod = QTableWidgetItem(
+                    format_number(profile.facteur_productivite)
+                )
 
                 item_prod.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -239,23 +267,23 @@ class ProfilesTab(QWidget):
                 self.profile_table.setItem(row, 4, item_prod)
 
                 self.profile_table.setItem(
-                    row, 5, centered_item(f"{profile.heure_par_ligne:.2f}")
+                    row, 5, centered_item(format_number(profile.heure_par_ligne))
                 )
 
                 self.profile_table.setItem(
-                    row, 6, centered_item(f"{profile.heure_par_support:.2f}")
+                    row, 6, centered_item(format_number(profile.heure_par_support))
                 )
 
                 self.profile_table.setItem(
-                    row, 7, centered_item(f"{profile.heure_par_vanne:.2f}")
+                    row, 7, centered_item(format_number(profile.heure_par_vanne))
                 )
 
                 self.profile_table.setItem(
-                    row, 8, centered_item(f"{profile.heure_par_bride:.2f}")
+                    row, 8, centered_item(format_number(profile.heure_par_bride))
                 )
 
                 self.profile_table.setItem(
-                    row, 9, centered_item(f"{profile.heure_par_equipement:.2f}")
+                    row, 9, centered_item(format_number(profile.heure_par_equipement))
                 )
 
             if selected_row is not None:
@@ -288,33 +316,37 @@ class ProfilesTab(QWidget):
 
         if profile is None:
             return
+
+        rate = self.settings.exchange_rates.get(self.settings.currency, 1.0)
+
+        tjm = profile.taux_journalier * rate
+
         cout_horaire = (
-            profile.taux_journalier / profile.heures_par_jour
-            if profile.heures_par_jour > 0
-            else 0
+            tjm / profile.heures_par_jour if profile.heures_par_jour > 0 else 0
         )
 
         self.details_label.setText(f"""
-<b>{profile.nom}</b><br><br>
+        <b>{profile.nom}</b><br><br>
 
-<b>Description :</b><br>
-{profile.description or "Aucune description"}<br><br>
+        <b>Description :</b><br>
+        {profile.description or "Aucune description"}<br><br>
 
-<b>Coûts</b><br>
-Taux journalier : {profile.taux_journalier:.2f} €/j<br>
-Coût horaire : {cout_horaire:.2f} €/h<br>
-Heures / jour : {profile.heures_par_jour:.2f}<br>
-Facteur productivité : {profile.facteur_productivite:.2f}<br><br>
+        <b>Coûts</b><br>
+        Taux journalier : {format_number(tjm)}/j<br>
+        Coût horaire : {format_number(cout_horaire)}/h<br>
+        Heures / jour : {format_number(profile.heures_par_jour)}<br>
+        Facteur productivité : {format_number(profile.facteur_productivite)}<br><br>
 
-<b>Paramètres EstimateFlex</b><br>
-Temps par ligne : {profile.heure_par_ligne:.2f} h<br>
-Temps par support : {profile.heure_par_support:.2f} h<br>
-Temps par vanne : {profile.heure_par_vanne:.2f} h<br>
-Temps boîte à ressort : {profile.heure_par_boite_a_ressort:.2f} h<br>
-Temps compensateur : {profile.heure_compensateur:.2f} h<br>
-Temps par bride : {profile.heure_par_bride:.2f} h<br>
-Temps par équipement : {profile.heure_par_equipement:.2f} h
-""")
+        <b>Paramètres EstimateFlex</b><br>
+        Temps par ligne : {format_number(profile.heure_par_ligne)} h<br>
+        Temps par support : {format_number(profile.heure_par_support)} h<br>
+        Temps par vanne : {format_number(profile.heure_par_vanne)} h<br>
+        Temps boîte à ressort : {format_number(profile.heure_par_boite_a_ressort)} h<br>
+        TTemps compensateur : {format_number(profile.heure_compensateur)} h<br>
+        Temps par bride : {format_number(profile.heure_par_bride)} h<br>
+        Temps par équipement : {format_number(profile.heure_par_equipement)} h
+
+        """)
 
     # =========================================================
     # Ajouter
@@ -419,6 +451,22 @@ Temps par équipement : {profile.heure_par_equipement:.2f} h
 
         return item.data(Qt.ItemDataRole.UserRole)
 
+    def _update_labels(self):
+        self.profile_table.setHorizontalHeaderLabels(
+            [
+                "Nom",
+                f"TJM {self.settings.currency}",
+                f"{self.settings.currency}/h",
+                "H/J",
+                "Prod",
+                "Ligne",
+                "Support",
+                "Vanne",
+                "Bride",
+                "Equip.",
+            ]
+        )
+
     # =========================================================
     # Refresh
     # =========================================================
@@ -428,4 +476,7 @@ Temps par équipement : {profile.heure_par_equipement:.2f} h
         Rafraîchit l'onglet.
         """
 
+        self.settings = self.settings_service.get()
+
+        self._update_labels()
         self.load_profiles()

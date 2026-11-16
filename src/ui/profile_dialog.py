@@ -59,13 +59,13 @@ class ProfileDialog(QDialog):
         self.taux_journalier_edit = QDoubleSpinBox()
         self.taux_journalier_edit.setRange(0, 10000)
         self.taux_journalier_edit.setDecimals(2)
-        self.taux_journalier_edit.setSuffix(" €/j")
+        self.taux_journalier_edit.setSuffix(f" {self.settings.currency}/j")
 
         self.heures_par_jour_edit = QDoubleSpinBox()
         self.heures_par_jour_edit.setRange(1, 24)
         self.heures_par_jour_edit.setDecimals(2)
 
-        self.heures_par_jour_edit.setValue(7.0)
+        # self.heures_par_jour_edit.setValue(profile.heures_par_jour)
 
         self.facteur_productivite_edit = QDoubleSpinBox()
         self.facteur_productivite_edit.setRange(0.1, 5.0)

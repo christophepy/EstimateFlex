@@ -18,6 +18,7 @@ class UserProfile:
 
     nom: str = ""
     description: str = ""
+    currency: str = "EUR"
 
     taux_journalier: float = 650.0
     heures_par_jour: float = 7.0

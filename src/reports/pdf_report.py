@@ -2,6 +2,8 @@
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
+from src.utils.formatters import format_number
+
 
 class PdfReport:
 
@@ -19,7 +21,10 @@ class PdfReport:
         elements.append(Spacer(1, 12))
 
         elements.append(
-            Paragraph(f"Project : {estimation.project_nom}", styles["BodyText"])
+            Paragraph(
+                ("Coût : " f"{format_number(estimation.total_cost)}"),
+                styles["BodyText"],
+            )
         )
 
         elements.append(

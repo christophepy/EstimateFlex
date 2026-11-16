@@ -76,6 +76,7 @@ class Estimator:
                 cost.final_cost,
                 2,
             ),
+            currency=profile.currency,
             risk_factor=round(
                 risk_factor,
                 2,

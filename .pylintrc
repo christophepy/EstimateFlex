@@ -13,8 +13,3 @@ disable=
     missing-class-docstring,
     missing-function-docstring,
     too-few-public-methods,
-    too-many-instance-attributes,
-    duplicate-code,
-    broad-exception-caught,
-    invalid-name,
-    protected-access

@@ -21,20 +21,46 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from src.services.settings_service import SettingsService
+from src.utils.formatters import (
+    format_currency,
+    format_number,
+)
+
 
 class DashboardTab(QWidget):
 
     def __init__(
         self,
         estimation_repository,
+        settings_service: SettingsService,
         parent=None,
     ):
         super().__init__(parent)
 
         self.estimation_repository = estimation_repository
 
+        self.settings_service = settings_service
+        self.settings = self.settings_service.get()
+
         self._build_ui()
+
+        self.apply_settings()
+
         self.load_data()
+
+    def _convert_cost(self, amount: float) -> float:
+        """
+        Convertit un montant EUR vers la devise courante.
+        """
+        settings = self.settings_service.get()
+
+        rate = settings.exchange_rates.get(
+            settings.currency,
+            1.0,
+        )
+
+        return round(amount * rate, 2)
 
     # ==========================================================
     # UI
@@ -52,8 +78,9 @@ class DashboardTab(QWidget):
         # KPI
         # ------------------------------------------------------
 
-        kpi_group = QGroupBox("Indicateurs clés")
-        kpi_group.setMaximumHeight(100)
+        self.kpi_group = QGroupBox("Indicateurs clés")
+
+        self.kpi_group.setMaximumHeight(100)
 
         kpi_layout = QGridLayout()
 
@@ -63,11 +90,12 @@ class DashboardTab(QWidget):
         self.lbl_count = QLabel("0")
         self.lbl_hours = QLabel("0 h")
         self.lbl_days = QLabel("0 j")
-        self.lbl_cost = QLabel("0 €")
 
-        self.lbl_total_cost = QLabel("0 €")
-        self.lbl_max_cost = QLabel("0 €")
-        self.lbl_min_cost = QLabel("0 €")
+        self.lbl_cost = QLabel(f"0 {self.settings.currency}")
+        self.lbl_total_cost = QLabel(f"0 {self.settings.currency}")
+        self.lbl_max_cost = QLabel(f"0 {self.settings.currency}")
+        self.lbl_min_cost = QLabel(f"0 {self.settings.currency}")
+
         self.lbl_best_profile = QLabel("-")
 
         for lbl in (
@@ -113,9 +141,9 @@ class DashboardTab(QWidget):
         kpi_layout.setHorizontalSpacing(25)
         kpi_layout.setVerticalSpacing(5)
 
-        kpi_group.setLayout(kpi_layout)
+        self.kpi_group.setLayout(kpi_layout)
 
-        layout.addWidget(kpi_group)
+        layout.addWidget(self.kpi_group)
 
         self.lbl_last_estimation = QLabel("Dernière estimation : -")
 
@@ -138,7 +166,7 @@ class DashboardTab(QWidget):
         # Graphique
         # ------------------------------------------------------
 
-        chart_group = QGroupBox("Estimations par scénario")
+        self.chart_group = QGroupBox("Estimations par scénario")
 
         chart_layout = QVBoxLayout()
 
@@ -152,7 +180,7 @@ class DashboardTab(QWidget):
 
         chart_layout.addWidget(self.canvas)
 
-        chart_group.setLayout(chart_layout)
+        self.chart_group.setLayout(chart_layout)
 
         # ------------------------------------------------------
         # TOP 5
@@ -204,7 +232,10 @@ class DashboardTab(QWidget):
 
         middle_layout = QHBoxLayout()
 
-        middle_layout.addWidget(chart_group, 3)
+        middle_layout.addWidget(
+            self.chart_group,
+            3,
+        )
 
         middle_layout.addWidget(top_group, 2)
 
@@ -257,19 +288,22 @@ class DashboardTab(QWidget):
 
         history_group.setLayout(history_layout)
 
-        cost_group = QGroupBox("Répartition des coûts")
+        self.cost_group = QGroupBox("Répartition des coûts")
 
         cost_layout = QVBoxLayout()
 
         cost_layout.addWidget(self.cost_canvas)
 
-        cost_group.setLayout(cost_layout)
+        self.cost_group.setLayout(cost_layout)
 
         bottom_layout = QHBoxLayout()
 
         bottom_layout.addWidget(history_group, 3)
 
-        bottom_layout.addWidget(cost_group, 2)
+        bottom_layout.addWidget(
+            self.cost_group,
+            2,
+        )
 
         layout.addLayout(bottom_layout)
 
@@ -292,6 +326,32 @@ class DashboardTab(QWidget):
     # DATA
     # ==========================================================
 
+    def apply_settings(self):
+        """
+        Applique les préférences d'affichage
+        du Dashboard.
+        """
+
+        settings = self.settings_service.get()
+
+        show_kpis = getattr(
+            settings,
+            "show_dashboard_kpis",
+            True,
+        )
+
+        show_charts = getattr(
+            settings,
+            "show_dashboard_charts",
+            True,
+        )
+
+        self.kpi_group.setVisible(show_kpis)
+
+        self.chart_group.setVisible(show_charts)
+
+        self.cost_group.setVisible(show_charts)
+
     def load_data(self):
 
         reports = (
@@ -303,7 +363,7 @@ class DashboardTab(QWidget):
             self.lbl_count.setText("0")
             self.lbl_hours.setText("0 h")
             self.lbl_days.setText("0 j")
-            self.lbl_cost.setText("0 €")
+            self.lbl_cost.setText(f"0 {self.settings.currency}")
 
             self.lbl_last_estimation.setText("Dernière estimation : -")
 
@@ -318,13 +378,13 @@ class DashboardTab(QWidget):
 
         avg_days = mean(r.estimated_days for r in reports)
 
-        avg_cost = mean(r.estimated_cost for r in reports)
+        avg_cost = self._convert_cost(mean(r.estimated_cost for r in reports))
 
-        total_cost = sum(r.estimated_cost for r in reports)
+        total_cost = self._convert_cost(sum(r.estimated_cost for r in reports))
 
-        max_cost = max(r.estimated_cost for r in reports)
+        max_cost = self._convert_cost(max(r.estimated_cost for r in reports))
 
-        min_cost = min(r.estimated_cost for r in reports)
+        min_cost = self._convert_cost(min(r.estimated_cost for r in reports))
 
         profiles = {}
 
@@ -332,41 +392,64 @@ class DashboardTab(QWidget):
 
             profiles.setdefault(report.profile_nom, 0)
 
-            profiles[report.profile_nom] += report.estimated_cost
+            profiles[report.profile_nom] += self._convert_cost(report.estimated_cost)
 
         best_profile = max(profiles.items(), key=lambda item: item[1])[0]
 
         self.lbl_count.setText(str(len(reports)))
 
-        self.lbl_hours.setText(f"{avg_hours:.2f} h")
+        self.lbl_hours.setText(f"{format_number(avg_hours)} h")
 
-        self.lbl_days.setText(f"{avg_days:.2f} j")
+        self.lbl_days.setText(f"{format_number(avg_days)} j")
 
-        self.lbl_cost.setText(f"{avg_cost:,.0f}".replace(",", " ") + " €")
+        self.lbl_min_cost.setText(
+            format_currency(
+                min_cost,
+                self.settings.currency,
+                0,
+            )
+        )
 
         self.lbl_total_cost.setText(
-            f"{total_cost:,.0f}".replace(",", " ").replace(".", ",") + " €"
+            format_currency(
+                total_cost,
+                self.settings.currency,
+                0,
+            )
         )
 
         self.lbl_max_cost.setText(
-            f"{max_cost:,.0f}".replace(",", " ").replace(".", ",") + " €"
+            format_currency(
+                max_cost,
+                self.settings.currency,
+                0,
+            )
         )
 
-        self.lbl_min_cost.setText(
-            f"{min_cost:,.0f}".replace(",", " ").replace(".", ",") + " €"
+        self.lbl_cost.setText(
+            format_currency(
+                avg_cost,
+                self.settings.currency,
+                0,
+            )
         )
 
         self.lbl_best_profile.setText(best_profile)
 
         latest_report = max(reports, key=lambda r: str(r.created_at))
 
-        latest_cost = f"{latest_report.estimated_cost:,.0f}".replace(",", " ")
+        latest_cost_value = self._convert_cost(latest_report.estimated_cost)
+
+        latest_cost = format_number(
+            latest_cost_value,
+            0,
+        )
 
         self.lbl_last_estimation.setText(
             "Dernière estimation : "
             f"{latest_report.project_nom} / "
             f"{latest_report.scenario_nom} / "
-            f"{latest_cost} €"
+            f"{latest_cost} {self.settings.currency}"
         )
 
         self._update_chart(reports)
@@ -383,7 +466,12 @@ class DashboardTab(QWidget):
 
         for row, report in enumerate(top_reports):
 
-            cost = f"{report.estimated_cost:,.0f}".replace(",", " ").replace(".", ",")
+            converted_cost = self._convert_cost(report.estimated_cost)
+
+            cost = format_number(
+                converted_cost,
+                0,
+            )
 
             self.top_table.setItem(row, 0, QTableWidgetItem(str(report.project_nom)))
 
@@ -391,7 +479,11 @@ class DashboardTab(QWidget):
 
             self.top_table.setItem(row, 2, QTableWidgetItem(str(report.scenario_nom)))
 
-            self.top_table.setItem(row, 3, QTableWidgetItem(f"{cost} €"))
+            self.top_table.setItem(
+                row,
+                3,
+                QTableWidgetItem(f"{cost} {self.settings.currency}"),
+            )
 
             self.top_table.setItem(
                 row, 4, QTableWidgetItem(str(report.created_at)[:10])
@@ -405,7 +497,12 @@ class DashboardTab(QWidget):
 
         for row, report in enumerate(reports):
 
-            cost = f"{report.estimated_cost:,.2f}".replace(",", " ")
+            cost_value = self._convert_cost(report.estimated_cost)
+
+            cost = format_number(
+                cost_value,
+                2,
+            )
 
             self.table.setItem(row, 0, QTableWidgetItem(str(report.project_nom)))
 
@@ -414,10 +511,20 @@ class DashboardTab(QWidget):
             self.table.setItem(row, 2, QTableWidgetItem(str(report.scenario_nom)))
 
             self.table.setItem(
-                row, 3, QTableWidgetItem(f"{report.estimated_hours:.2f}")
+                row,
+                3,
+                QTableWidgetItem(
+                    format_number(
+                        report.estimated_hours,
+                    )
+                ),
             )
 
-            self.table.setItem(row, 4, QTableWidgetItem(f"{cost} €"))
+            self.table.setItem(
+                row,
+                4,
+                QTableWidgetItem(f"{cost} {self.settings.currency}"),
+            )
 
             self.table.setItem(row, 5, QTableWidgetItem(str(report.created_at)[:10]))
 
@@ -515,13 +622,15 @@ class DashboardTab(QWidget):
 
         labels = [f"{r.project_nom} [{r.scenario_nom}]" for r in top_costs]
 
-        values = [r.estimated_cost for r in top_costs]
+        values = [self._convert_cost(r.estimated_cost) for r in top_costs]
 
         ax.barh(labels, values, color="#42A5F5")
 
         ax.set_xlim(0, max(values) * 1.25)
 
-        ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x/1000:.0f} k€"))
+        ax.xaxis.set_major_formatter(
+            FuncFormatter(lambda x, _: f"{x/1000:.0f} k{self.settings.currency}")
+        )
 
         ax.grid(axis="x", linestyle="--", alpha=0.3)
 
@@ -545,4 +654,9 @@ class DashboardTab(QWidget):
     # ==========================================================
 
     def refresh(self):
+
+        self.settings = self.settings_service.get()
+
+        self.apply_settings()
+
         self.load_data()

@@ -21,6 +21,7 @@ class EstimationResult:
     estimated_hours: float = 0.0
     estimated_days: float = 0.0
     estimated_cost: float = 0.0
+    currency: str = "EUR"
 
     # Risque
     risk_factor: float = 1.0

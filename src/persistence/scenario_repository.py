@@ -261,9 +261,7 @@ class ScenarioRepository:
             "Réaliste",
             "Pessimiste",
         }:
-            raise ValueError(
-                "Les scénarios système ne peuvent pas être supprimés."
-            )
+            raise ValueError("Les scénarios système ne peuvent pas être supprimés.")
 
         if ScenarioRepository.is_used(scenario_id):
             raise ValueError(

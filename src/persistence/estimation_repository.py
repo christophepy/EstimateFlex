@@ -30,10 +30,11 @@ class EstimationRepository:
                 estimated_hours,
                 estimated_days,
                 estimated_cost,
+                currency,
                 risk_factor,
                 created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 estimation.estimation_nom,
@@ -43,6 +44,7 @@ class EstimationRepository:
                 estimation.estimated_hours,
                 estimation.estimated_days,
                 estimation.estimated_cost,
+                estimation.currency,
                 estimation.risk_factor,
                 estimation.created_at,
             ),
@@ -82,6 +84,7 @@ class EstimationRepository:
                     estimated_hours=row["estimated_hours"],
                     estimated_days=row["estimated_days"],
                     estimated_cost=row["estimated_cost"],
+                    currency=row["currency"] or "EUR",
                     risk_factor=row["risk_factor"],
                     created_at=row["created_at"],
                 )
@@ -122,6 +125,7 @@ class EstimationRepository:
             estimated_hours=row["estimated_hours"],
             estimated_days=row["estimated_days"],
             estimated_cost=row["estimated_cost"],
+            currency=row["currency"] or "EUR",
             risk_factor=row["risk_factor"],
             created_at=row["created_at"],
         )
@@ -194,6 +198,7 @@ class EstimationRepository:
                 estimated_hours,
                 estimated_days,
                 estimated_cost,
+                currency,
                 risk_factor,
                 created_at
             )
@@ -207,6 +212,7 @@ class EstimationRepository:
                 estimation.estimated_hours,
                 estimation.estimated_days,
                 estimation.estimated_cost,
+                estimation.currency,
                 estimation.risk_factor,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             ),

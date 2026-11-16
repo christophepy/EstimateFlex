@@ -1,4 +1,3 @@
-# Calcul des coûts
 """
 EstimateFlex
 Cost Engine
@@ -43,6 +42,7 @@ class CostEngine:
         estimated_hours: float,
         daily_rate: float,
         risk_factor: float = 1.0,
+        hours_per_day: float | None = None,
     ) -> CostBreakdown:
         """
         Calcul principal.
@@ -51,6 +51,7 @@ class CostEngine:
             estimated_hours: charge estimée en heures
             daily_rate: TJM utilisateur
             risk_factor: multiplicateur de risque
+            hours_per_day: nombre d'heures par jour
 
         Returns:
             CostBreakdown
@@ -60,7 +61,11 @@ class CostEngine:
         daily_rate = max(0.0, float(daily_rate))
         risk_factor = max(1.0, float(risk_factor))
 
-        estimated_days = estimated_hours / cls.HOURS_PER_DAY
+        hours_per_day = (
+            float(hours_per_day) if hours_per_day is not None else cls.HOURS_PER_DAY
+        )
+
+        estimated_days = estimated_hours / hours_per_day
 
         base_cost = estimated_days * daily_rate
 
@@ -81,6 +86,7 @@ class CostEngine:
         estimated_days: float,
         daily_rate: float,
         risk_factor: float = 1.0,
+        hours_per_day: float | None = None,
     ) -> CostBreakdown:
         """
         Calcul à partir d'un nombre de jours.
@@ -88,10 +94,15 @@ class CostEngine:
 
         estimated_days = max(0.0, float(estimated_days))
 
+        hours_per_day = (
+            float(hours_per_day) if hours_per_day is not None else cls.HOURS_PER_DAY
+        )
+
         return cls.calculate(
-            estimated_hours=estimated_days * cls.HOURS_PER_DAY,
+            estimated_hours=estimated_days * hours_per_day,
             daily_rate=daily_rate,
             risk_factor=risk_factor,
+            hours_per_day=hours_per_day,
         )
 
     @staticmethod

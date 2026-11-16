@@ -18,6 +18,10 @@ from src.services.estimation_service import EstimationService
 from src.services.profile_service import ProfileService
 from src.services.project_service import ProjectService
 from src.services.scenario_service import ScenarioService
+from src.utils.formatters import (
+    format_currency,
+    format_number,
+)
 
 
 class EstimationTab(QWidget):
@@ -25,8 +29,15 @@ class EstimationTab(QWidget):
     Onglet d'estimation principal.
     """
 
-    def __init__(self, parent=None):
+    def __init__(
+        self,
+        settings_service,
+        parent=None,
+    ):
         super().__init__(parent)
+
+        self.settings_service = settings_service
+        self.settings = self.settings_service.get()
 
         self.estimation_service = EstimationService()
         self.profile_service = ProfileService()
@@ -107,7 +118,9 @@ class EstimationTab(QWidget):
         results_layout.addWidget(QLabel("Jours estimés"), 1, 0)
         results_layout.addWidget(self.days_edit, 1, 1)
 
-        results_layout.addWidget(QLabel("Coût estimé (€)"), 2, 0)
+        self.cost_label = QLabel(f"Coût estimé ({self.settings.currency})")
+
+        results_layout.addWidget(self.cost_label, 2, 0)
         results_layout.addWidget(self.cost_edit, 2, 1)
 
         results_group.setLayout(results_layout)
@@ -230,11 +243,24 @@ class EstimationTab(QWidget):
                 scenario=scenario,
             )
 
-            self.hours_edit.setText(f"{result.estimated_hours:.2f}")
+            self.hours_edit.setText(
+                format_number(
+                    result.estimated_hours,
+                )
+            )
 
-            self.days_edit.setText(f"{result.estimated_days:.2f}")
+            self.days_edit.setText(
+                format_number(
+                    result.estimated_days,
+                )
+            )
 
-            self.cost_edit.setText(f"{result.estimated_cost:,.2f}")
+            self.cost_edit.setText(
+                format_currency(
+                    result.estimated_cost,
+                    self.settings.currency,
+                )
+            )
 
             self._display_details(
                 project,
@@ -250,10 +276,6 @@ class EstimationTab(QWidget):
                 "Erreur",
                 str(exc),
             )
-        # rechzechz erreur
-        print(profile.nom)
-        print(profile.facteur_productivite)
-        # ++
 
     def _display_details(
         self,
@@ -279,28 +301,49 @@ class EstimationTab(QWidget):
 
         details.append(f"Description : {scenario.description}")
 
-        details.append(f"Facteur productivité : {scenario.facteur_productivite:.2f}")
+        details.append(
+            f"Facteur productivité : {format_number(scenario.facteur_productivite)}"
+        )
 
-        details.append(f"Facteur risque : {scenario.facteur_risque:.2f}")
+        details.append(f"Facteur risque : {format_number(scenario.facteur_risque)}")
 
-        details.append(f"Facteur disponibilité : {scenario.facteur_disponibilite:.2f}")
+        details.append(
+            f"Facteur disponibilité : {format_number(scenario.facteur_disponibilite)}"
+        )
 
         details.append("")
 
         details.append("===== RÉSULTATS =====")
 
-        details.append(f"Heures estimées : {result.estimated_hours:.2f}")
+        details.append(f"Heures estimées : {format_number(result.estimated_hours)}")
 
-        details.append(f"Jours estimés : {result.estimated_days:.2f}")
+        details.append(f"Jours estimés : {format_number(result.estimated_days)}")
 
         details.append(
-            f"Coût estimé : {result.estimated_cost:,.2f}".replace(",", " ") + " €"
+            "Coût estimé : "
+            + format_currency(
+                result.estimated_cost,
+                self.settings.currency,
+            )
         )
 
         self.details_text.setPlainText("\n".join(details))
+
+    def _update_labels(self):
+        """
+        Met à jour les libellés dépendants
+        des paramètres.
+        """
+
+        self.cost_label.setText(f"Coût estimé ({self.settings.currency})")
 
     def refresh(self):
         """
         Rafraîchit les données de l'onglet.
         """
+
+        self.settings = self.settings_service.get()
+
+        self._update_labels()
+
         self._load_data()

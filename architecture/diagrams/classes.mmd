@@ -1,0 +1,615 @@
+classDiagram
+    class EnsureDirectories {
+    }
+    class CostBreakdown {
+        +float estimated_hours
+        +float estimated_days
+        +float daily_rate
+        +float base_cost
+        +float risk_factor
+        +float final_cost
+    }
+    class CostEngine {
+        +Any HOURS_PER_DAY
+        +calculate(cls, estimated_hours, daily_rate, risk_factor, hours_per_day) CostBreakdown
+        +from_days(cls, estimated_days, daily_rate, risk_factor, hours_per_day) CostBreakdown
+        +margin(selling_price, estimated_cost) float
+        +margin_rate(selling_price, estimated_cost) float
+    }
+    class DurationBreakdown {
+        +float estimated_hours
+        +float productivity_factor
+        +float risk_factor
+        +float availability_factor
+        +float adjusted_hours
+        +float estimated_days
+    }
+    class DurationEngine {
+        +Any HOURS_PER_DAY
+        +calculate(cls, estimated_hours, productivity_factor, risk_factor, availability_factor) DurationBreakdown
+        +hours_to_days(cls, hours) float
+        +days_to_hours(cls, days) float
+        +working_weeks(estimated_days) float
+    }
+    class Estimator {
+        +Any cost_engine
+        +Any duration_engine
+        +Any risk_engine
+        +__init__() None
+        +estimate(project, profile) EstimationResult
+        +_calculate_hours(project) float
+    }
+    class RiskResult {
+        +float score
+        +float factor
+    }
+    class RiskEngine {
+        +calculate(planning_risk, scope_risk, technical_risk) RiskResult
+    }
+    class ScenarioType {
+        +Any OPTIMISTIC
+        +Any REALISTIC
+        +Any PESSIMISTIC
+    }
+    class ScenarioResult {
+        +str scenario
+        +float estimated_hours
+        +float estimated_days
+        +float estimated_cost
+        +float effort_multiplier
+        +float risk_multiplier
+    }
+    class ScenarioEngine {
+        +Any SCENARIOS
+        +build(cls, base_hours, base_days, base_cost, scenario_type) ScenarioResult
+        +generate_all(cls, base_hours, base_days, base_cost) list[ScenarioResult]
+        +best_case(scenarios) ScenarioResult
+        +worst_case(scenarios) ScenarioResult
+        +average_cost(scenarios) float
+    }
+    class AppSettings {
+        +str company_name
+        +str currency
+        +str export_directory
+        +float hours_per_day
+        +int days_per_month
+        +str theme
+        +int font_size
+        +bool show_dashboard_kpis
+        +bool show_dashboard_charts
+        +to_dict() dict
+        +from_dict(cls, data) 'AppSettings'
+    }
+    class Deliverables {
+        +int rapport_calcul
+        +int rapport_calcul_intermediare
+        +int fichier_resultat
+        +int notes_supports
+        +int notes_equipements
+        +int plans_supports
+        +int presentation_client
+        +int fichier_modele
+    }
+    class EstimationResult {
+        +int | None id
+        +str estimation_nom
+        +str project_nom
+        +str profile_nom
+        +str scenario_nom
+        +float estimated_hours
+        +float estimated_days
+        +float estimated_cost
+        +float risk_factor
+        +str created_at
+        +create(cls, project_nom, profile_nom, scenario_nom, estimated_hours, estimated_days, estimated_cost, risk_factor) None
+    }
+    class Project {
+        +int | None id
+        +str nom
+        +str client
+        +str description
+        +str profile_nom
+        +float budget
+        +str status
+        +ProjectParameters parameters
+        +Deliverables deliverables
+        +ReviewMetrics reviews
+    }
+    class ProjectParameters {
+        +int nb_lignes
+        +int nb_supports
+        +int nb_vannes
+        +int nb_brides
+        +int nb_compensateur
+        +int nb_connexions_equipements
+        +int nb_soudures
+    }
+    class ReviewMetrics {
+        +int nb_revues_internes
+        +int nb_revues_client
+        +int nb_aller_retour
+    }
+    class Scenario {
+        +int | None id
+        +str nom
+        +str description
+        +float facteur_productivite
+        +float facteur_risque
+        +float facteur_disponibilite
+        +bool actif
+    }
+    class UserProfile {
+        +int | None id
+        +str nom
+        +str description
+        +float taux_journalier
+        +float heures_par_jour
+        +float facteur_productivite
+        +float heure_par_ligne
+        +float heure_par_support
+        +float heure_par_vanne
+        +float heure_par_boite_a_ressort
+        +float heure_compensateur
+        +float heure_par_bride
+        +float heure_par_equipement
+        +float heure_par_note_de_calcul
+        +float heure_par_presentation
+        +float heure_par_verification
+    }
+    class Database {
+        +initialize() None
+    }
+    class EstimationRepository {
+        +save(estimation) None
+        +get_all() list[EstimationResult]
+        +get_estimation(estimation_id) EstimationResult | None
+        +delete_estimation(estimation_id) None
+        +rename_estimation(estimation_id, new_name) None
+        +duplicate_estimation(estimation_id) int | None
+        +count() int
+    }
+    class ProfileRepository {
+        +create(profile) int
+        +get_by_id(profile_id) UserProfile | None
+        +get_all() list[UserProfile]
+        +update(profile) bool
+        +delete(profile_id) bool
+        +count() int
+        +get_by_name(nom) UserProfile | None
+    }
+    class ProjectRepository {
+        +Any storage_dir
+        +__init__(storage_dir) None
+        +_name_exists(project_nom) bool
+        +save(project) Project
+        +delete(project_nom) bool
+        +load(project_nom) Project
+        +get_by_name(nom) Project | None
+        +get_by_id(project_id) Project | None
+        +get_all() list[Project]
+        +exists(project_nom) bool
+        +list_projects() list[str]
+        +update(project) Project
+        +count() int
+    }
+    class ScenarioRepository {
+        +_name_exists(nom, exclude_id) bool
+        +create(scenario) int
+        +get_by_id(scenario_id) Scenario | None
+        +get_by_name(nom) Scenario | None
+        +get_all() list[Scenario]
+        +update(scenario) bool
+        +is_used(scenario_id) bool
+        +delete(scenario_id) bool
+        +count() int
+    }
+    class SettingsRepository {
+        +Any data_dir
+        +Any file_path
+        +__init__(data_dir) None
+        +load() AppSettings
+        +save(settings) None
+        +reset() AppSettings
+    }
+    class ExcelReport {
+        +generate(estimation, output_file) None
+    }
+    class PdfReport {
+        +generate(estimation, output_file) None
+    }
+    class ReportGenerator {
+        +generate(report_type, estimation, output_file) None
+    }
+    class EstimationService {
+        +Any repository
+        +Any estimator
+        +__init__(repository) None
+        +estimate(project, profile, scenario) EstimationResult
+    }
+    class ExcelExportService {
+        +export(report, file_path, currency) Path
+        +_get_versioned_filename(output) Path
+    }
+    class PdfExportService {
+        +export(report, file_path, currency) Path
+        +_get_versioned_filename(output) Path
+    }
+    class ProfileService {
+        +Any repository
+        +__init__(repository) None
+        +create_profile(profile) int
+        +update_profile(profile) bool
+        +delete_profile(profile_id) bool
+        +get_profile(profile_id) UserProfile | None
+        +get_profile_by_nom(nom) UserProfile | None
+        +get_all_profiles() list[UserProfile]
+        +get_default_profile() UserProfile | None
+        +set_default_profile() bool
+        +validate_profile(profile) tuple[bool, list[str]]
+        +duplicate_profile(profile_id, new_nom) int
+        +count_profiles() int
+    }
+    class ProjectService {
+        +Any repository
+        +__init__(repository) None
+        +create_project(project) Project
+        +update_project(project) Project
+        +delete_project(project_nom) bool
+        +get_project(project_nom) Project | None
+        +get_project_by_nom(nom) Project | None
+        +get_all_projects() list[Project]
+        +search_projects(keyword) list[Project]
+        +count_projects() int
+        +total_estimated_cost() float
+        +total_estimated_days() float
+        +total_estimated_hours() float
+        +build_estimation_context(project_nom) dict
+        +_validate_project(project) None
+        +dashboard_summary() dict
+    }
+    class ScenarioService {
+        +Any repository
+        +__init__() None
+        +get_all_scenarios() list[Scenario]
+        +get_scenario(scenario_id) Scenario | None
+        +get_by_name(nom) Scenario | None
+        +create_scenario(scenario) int
+        +update_scenario(scenario) None
+        +delete_scenario(scenario_id) None
+        +count() int
+        +_validate_scenario(scenario) None
+    }
+    class SettingsService {
+        +Any persistence
+        +__init__(repository) None
+        +get() AppSettings
+        +save(settings) None
+        +reset() AppSettings
+        +update(**kwargs) AppSettings
+        +_validate(settings) None
+    }
+    class DashboardTab {
+        +Any estimation_repository
+        +Any settings_service
+        +Any settings
+        +Any lbl_count
+        +Any lbl_hours
+        +Any lbl_days
+        +Any lbl_cost
+        +Any lbl_total_cost
+        +Any lbl_max_cost
+        +Any lbl_min_cost
+        +Any lbl_best_profile
+        +Any lbl_last_estimation
+        +Any figure
+        +Any canvas
+        +Any cost_figure
+        +Any cost_canvas
+        +Any top_table
+        +Any table
+        +__init__(estimation_repository, settings_service, parent) None
+        +_build_ui() None
+        +load_data() None
+        +_update_chart(reports) None
+        +_update_cost_chart(reports) None
+        +refresh() None
+    }
+    class EstimationTab {
+        +Any settings_service
+        +Any settings
+        +Any estimation_service
+        +Any profile_service
+        +Any project_service
+        +Any scenario_service
+        +Any profile_combo
+        +Any project_combo
+        +Any scenario_combo
+        +Any estimate_button
+        +Any hours_edit
+        +Any days_edit
+        +Any cost_edit
+        +Any cost_label
+        +Any details_text
+        +__init__(settings_service, parent) None
+        +_build_ui() None
+        +_load_data() None
+        +calculate_estimation() None
+        +_display_details(project, profile, scenario, result) None
+        +_update_labels() None
+        +refresh() None
+    }
+    class MainWindow {
+        +Any settings_service
+        +Any settings
+        +Any estimation_repository
+        +Any tabs
+        +Any projects_tab
+        +Any profiles_tab
+        +Any estimation_tab
+        +Any scenarios_tab
+        +Any reports_tab
+        +Any dashboard_tab
+        +__init__(settings_service) None
+        +_create_ui() None
+        +_create_menu() None
+        +_create_statusbar() None
+        +run_estimation() None
+        +show_about() None
+        +on_tab_changed(index) None
+        +show_settings() None
+        +reload_settings() None
+        +closeEvent(event) None
+    }
+    class ProfileDialog {
+        +Any profile
+        +Any nom_edit
+        +Any description_edit
+        +Any taux_journalier_edit
+        +Any heures_par_jour_edit
+        +Any facteur_productivite_edit
+        +Any heure_par_ligne_edit
+        +Any heure_par_support_edit
+        +Any heure_par_vanne_edit
+        +Any heure_par_boite_a_ressort_edit
+        +Any heure_compensateur_edit
+        +Any heure_par_bride_edit
+        +Any heure_par_equipement_edit
+        +__init__(parent, profile) None
+        +_build_ui() None
+        +_create_time_spin() None
+        +_load_profile() None
+        +get_profile() UserProfile
+    }
+    class ProfilesTab {
+        +Any settings_service
+        +Any settings
+        +Any profile_service
+        +Any profile_table
+        +Any details_label
+        +Any btn_add
+        +Any btn_edit
+        +Any btn_delete
+        +Any btn_refresh
+        +__init__(settings_service, parent) None
+        +_build_ui() None
+        +load_profiles() None
+        +on_profile_selected() None
+        +add_profile() None
+        +edit_profile() None
+        +delete_profile() None
+        +get_selected_profile() None
+        +_update_labels() None
+        +refresh() None
+    }
+    class ProjectDialog {
+        +Any project
+        +Any nom_edit
+        +Any client_edit
+        +Any description_edit
+        +Any nb_lignes_edit
+        +Any nb_supports_edit
+        +Any nb_vannes_edit
+        +Any nb_brides_edit
+        +Any nb_compensateur_edit
+        +Any nb_connexions_edit
+        +Any nb_soudures_edit
+        +Any rapport_calcul_edit
+        +Any rapport_inter_edit
+        +Any notes_supports_edit
+        +Any notes_equipements_edit
+        +Any plans_supports_edit
+        +Any presentation_client_edit
+        +Any fichier_modele_edit
+        +Any fichier_resultat_edit
+        +Any revues_internes_edit
+        +Any revues_client_edit
+        +Any aller_retour_edit
+        +__init__(project, parent) None
+        +_build_ui() None
+        +_load_project() None
+        +get_project() None
+    }
+    class ProjectsTab {
+        +Any project_service
+        +Any btn_new
+        +Any btn_edit
+        +Any btn_delete
+        +Any btn_refresh
+        +Any table
+        +Any details_label
+        +__init__(parent) None
+        +_build_ui() None
+        +load_projects() None
+        +get_selected_project() None
+        +create_project() None
+        +edit_project() None
+        +delete_project() None
+        +on_project_selected() None
+        +refresh() None
+    }
+    class NumericTableWidgetItem {
+        +__lt__(other) None
+    }
+    class ReportsTab {
+        +Any estimation_repository
+        +Any settings_service
+        +Any settings
+        +Any pdf_export_service
+        +Any excel_export_service
+        +Any reports_table
+        +Any open_btn
+        +Any rename_btn
+        +Any delete_btn
+        +Any refresh_btn
+        +Any open_exports_btn
+        +Any pdf_btn
+        +Any excel_btn
+        +Any lbl_name
+        +Any lbl_project
+        +Any lbl_scenario
+        +Any lbl_budget
+        +Any lbl_date
+        +__init__(estimation_repository, settings_service, parent) None
+        +_build_ui() None
+        +load_reports() None
+        +_get_selected_report() None
+        +_update_details() None
+        +_open_report() None
+        +rename_report() None
+        +delete_report() None
+        +export_pdf() None
+        +export_excel() None
+        +open_exports_folder() None
+    }
+    class ScenarioDialog {
+        +Any scenario
+        +Any nom_edit
+        +Any description_edit
+        +Any productivite_edit
+        +Any risque_edit
+        +Any disponibilite_edit
+        +Any actif_check
+        +__init__(parent, scenario) None
+        +_build_ui() None
+        +_load_scenario() None
+        +get_scenario() Scenario
+    }
+    class ScenariosTab {
+        +Any service
+        +Any add_button
+        +Any edit_button
+        +Any delete_button
+        +Any refresh_button
+        +Any table
+        +Any details_text
+        +Any scenarios
+        +__init__(parent) None
+        +_build_ui() None
+        +load_scenarios() None
+        +get_selected_scenario() None
+        +add_scenario() None
+        +edit_scenario() None
+        +delete_scenario() None
+        +_show_details() None
+        +refresh() None
+    }
+    class SettingsDialog {
+        +Any settings_service
+        +Any settings
+        +Any tabs
+        +Any company_edit
+        +Any currency_combo
+        +Any export_directory_edit
+        +Any hours_per_day_spin
+        +Any days_per_month_spin
+        +Any theme_combo
+        +Any font_size_spin
+        +Any dashboard_kpis_check
+        +Any dashboard_charts_check
+        +Any buttons
+        +__init__(settings_service, parent) None
+        +_create_ui() None
+        +_load_settings() None
+        +_save() None
+    }
+    class EstimateFlexError {
+    }
+    class ValidationError {
+    }
+    class DatabaseError {
+    }
+    class EstimationError {
+    }
+    class ReportGenerationError {
+    }
+
+    EstimateFlexError <|-- DatabaseError
+    EstimateFlexError <|-- EstimationError
+    EstimateFlexError <|-- ReportGenerationError
+    EstimateFlexError <|-- ValidationError
+    CostEngine ..> CostBreakdown
+    DashboardTab ..> SettingsService
+    DurationEngine ..> DurationBreakdown
+    EstimationRepository ..> EstimationResult
+    EstimationService ..> EstimationRepository
+    EstimationService ..> EstimationResult
+    EstimationService ..> Estimator
+    EstimationService ..> Project
+    EstimationService ..> Scenario
+    EstimationService ..> UserProfile
+    EstimationTab ..> EstimationService
+    EstimationTab ..> ProfileService
+    EstimationTab ..> ProjectService
+    EstimationTab ..> ScenarioService
+    Estimator ..> CostEngine
+    Estimator ..> DurationEngine
+    Estimator ..> EstimationResult
+    Estimator ..> Project
+    Estimator ..> RiskEngine
+    Estimator ..> UserProfile
+    MainWindow ..> DashboardTab
+    MainWindow ..> EstimationRepository
+    MainWindow ..> EstimationTab
+    MainWindow ..> ProfilesTab
+    MainWindow ..> ProjectsTab
+    MainWindow ..> ReportsTab
+    MainWindow ..> ScenariosTab
+    MainWindow ..> SettingsDialog
+    MainWindow ..> SettingsService
+    ProfileDialog ..> UserProfile
+    ProfileRepository ..> UserProfile
+    ProfileService ..> ProfileRepository
+    ProfileService ..> UserProfile
+    ProfilesTab ..> ProfileDialog
+    ProfilesTab ..> ProfileService
+    ProjectDialog ..> Deliverables
+    ProjectDialog ..> Project
+    ProjectDialog ..> ProjectParameters
+    ProjectDialog ..> ReviewMetrics
+    ProjectRepository ..> Deliverables
+    ProjectRepository ..> Project
+    ProjectRepository ..> ProjectParameters
+    ProjectRepository ..> ReviewMetrics
+    ProjectService ..> Project
+    ProjectService ..> ProjectRepository
+    ProjectService ..> ValidationError
+    ProjectsTab ..> ProjectDialog
+    ProjectsTab ..> ProjectService
+    ReportsTab ..> ExcelExportService
+    ReportsTab ..> NumericTableWidgetItem
+    ReportsTab ..> PdfExportService
+    ReportsTab ..> SettingsService
+    RiskEngine ..> RiskResult
+    ScenarioDialog ..> Scenario
+    ScenarioEngine ..> ScenarioResult
+    ScenarioEngine ..> ScenarioType
+    ScenarioRepository ..> Scenario
+    ScenarioService ..> Scenario
+    ScenarioService ..> ScenarioRepository
+    ScenariosTab ..> ScenarioDialog
+    ScenariosTab ..> ScenarioService
+    SettingsDialog ..> AppSettings
+    SettingsDialog ..> SettingsService
+    SettingsRepository ..> AppSettings
+    SettingsService ..> AppSettings
+    SettingsService ..> SettingsRepository

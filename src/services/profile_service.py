@@ -102,7 +102,6 @@ class ProfileService:
 
     def set_default_profile(
         self,
-        profile_id: int,
     ) -> bool:
         """
         Fonction conservée pour compatibilité.
