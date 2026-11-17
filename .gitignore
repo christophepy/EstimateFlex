@@ -59,3 +59,17 @@ Desktop.ini
 *.bak
 *.tmp
 *.temp
+
+# Architecture générée
+classes*.png
+packages*.png
+*.dot
+src.svg
+structure.txt
+audit_*.txt
+
+# Rapports d'analyse
+architecture/architecture.json
+architecture_report.md
+architecture_analyser.py
+extract_classes.py
