@@ -1,4 +1,6 @@
+# ==========================================
 # Python
+# ==========================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,70 +8,92 @@ __pycache__/
 # Virtual environments
 venv/
 env/
-.env/
-.envrc
+env311/
+.venv/
 
+# ==========================================
 # IDE
+# ==========================================
 .vscode/
 .idea/
 
-# Tests
+# ==========================================
+# Tests & Cache
+# ==========================================
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .coverage
 htmlcov/
 
-# Linters
-.ruff_cache/
-.mypy_cache/
-.pylint.d/
-
+# ==========================================
 # Build
+# ==========================================
 build/
 dist/
-*.egg-info/
+*.spec
 
+# ==========================================
 # PyInstaller
-*.spec.bak
+# ==========================================
+*.exe
+*.pkg
+*.toc
+*.pyz
 
+# ==========================================
+# Local data
+# ==========================================
+data/estimateflex.db
+data/settings.json
+
+# projets utilisateurs
+data/projects/*.json
+
+# ==========================================
+# Exports utilisateurs
+# ==========================================
+exports/
+*.pdf
+*.xlsx
+
+# ==========================================
+# Architecture générée
+# ==========================================
+architecture/
+
+# ==========================================
 # Logs
+# ==========================================
 *.log
 
-# Databases
+# ==========================================
+# Windows
+# ==========================================
+Thumbs.db
+Desktop.ini
+
+# ==========================================
+# Temporary files
+# ==========================================
+*.tmp
+*.bak
+*.swp
+
+# ==========================================
+# Distribution generated content
+# ==========================================
+dist/EstimateFlex/data/
+dist/EstimateFlex/_internal/data/
+
+# ==========================================
+# Generated reports
+# ==========================================
+docs/generated/
+
+# ==========================================
+# SQLite
+# ==========================================
 *.db
 *.sqlite
 *.sqlite3
-
-# Runtime project data
-data/projects/*.json
-!data/.gitkeep
-!data/projects/.gitkeep
-
-# Generated exports
-exports/pdf/*
-exports/excel/*
-!exports/pdf/.gitkeep
-!exports/excel/.gitkeep
-
-# OS
-Thumbs.db
-Desktop.ini
-.DS_Store
-
-# Backup / temp
-*.bak
-*.tmp
-*.temp
-
-# Architecture générée
-classes*.png
-packages*.png
-*.dot
-src.svg
-structure.txt
-audit_*.txt
-
-# Rapports d'analyse
-architecture/architecture.json
-architecture_report.md
-architecture_analyser.py
-extract_classes.py
