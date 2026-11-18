@@ -19,10 +19,7 @@ from reportlab.platypus import (
     TableStyle,
 )
 
-from src.utils.formatters import (
-    format_currency,
-    format_number,
-)
+from src.utils.formatters import format_number
 
 
 class PdfExportService:
@@ -171,19 +168,16 @@ class PdfExportService:
         # DONNEES ESTIMATION
         # ==================================================
 
-        formatted_cost = format_currency(
-            report.estimated_cost,
-            report.currency,
-        )
+        formatted_cost = format_number(report.estimated_cost)
 
         rows = [
             ["Champ", "Valeur"],
             ["Nom", str(report.estimation_nom)],
             ["Projet", str(report.project_nom)],
             ["Scénario", str(report.scenario_nom)],
-            ["Charge (heures)", f"{format_number(report.estimated_hours)} h"],
-            ["Durée (jours)", f"{format_number(report.estimated_days)} j"],
-            [f"Coût ({currency})", f"{formatted_cost} {currency}"],
+            ["Charge (heures)", format_number(report.estimated_hours)],
+            ["Durée (jours)", format_number(report.estimated_days)],
+            [f"Coût ({currency})", formatted_cost],
             ["Facteur de risque", format_number(report.risk_factor)],
             ["Date de génération", date_only],
         ]

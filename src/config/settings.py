@@ -7,10 +7,6 @@ class ApplicationSettings:
 
     export_directory: str = ""
 
-    theme: str = "light"
-
-    font_size: int = 10
-
     date_format: str = "dd/MM/yyyy"
 
     exchange_rates: dict[str, float] = field(

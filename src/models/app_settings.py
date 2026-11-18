@@ -19,10 +19,6 @@ class AppSettings:
 
     export_directory: str = "exports"
 
-    theme: str = "light"
-
-    font_size: int = 10
-
     show_dashboard_kpis: bool = True
     show_dashboard_charts: bool = True
 
@@ -32,8 +28,6 @@ class AppSettings:
             "currency": self.currency,
             "exchange_rates": self.exchange_rates,
             "export_directory": self.export_directory,
-            "theme": self.theme,
-            "font_size": self.font_size,
             "show_dashboard_kpis": self.show_dashboard_kpis,
             "show_dashboard_charts": self.show_dashboard_charts,
         }
@@ -52,16 +46,6 @@ class AppSettings:
             export_directory=data.get(
                 "export_directory",
                 "exports",
-            ),
-            theme=data.get(
-                "theme",
-                "light",
-            ),
-            font_size=int(
-                data.get(
-                    "font_size",
-                    10,
-                )
             ),
             show_dashboard_kpis=bool(
                 data.get(

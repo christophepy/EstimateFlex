@@ -13,10 +13,7 @@ from openpyxl.styles import (
     Side,
 )
 
-from src.utils.formatters import (
-    format_currency,
-    format_number,
-)
+from src.utils.formatters import format_number
 
 
 class ExcelExportService:
@@ -55,7 +52,7 @@ class ExcelExportService:
 
         date_only = str(report.created_at)[:10]
 
-        formatted_cost = format_currency(report.estimated_cost, report.currency)
+        formatted_cost = format_number(report.estimated_cost)
 
         # ==================================================
         # TITRE
@@ -95,11 +92,11 @@ class ExcelExportService:
             ["Nom", str(report.estimation_nom)],
             ["Projet", str(report.project_nom)],
             ["Scénario", str(report.scenario_nom)],
-            ["Charge (h)", f"{format_number(report.estimated_hours)} h"],
-            ["Durée (j)", f"{format_number(report.estimated_days)} j"],
-            [f"Coût ({currency})", f"{formatted_cost} {currency}"],
+            ["Charge (heures)", format_number(report.estimated_hours)],
+            ["Durée (jours)", format_number(report.estimated_days)],
+            [f"Coût ({currency})", formatted_cost],
             ["Facteur de risque", format_number(report.risk_factor)],
-            ["Date", date_only],
+            ["Date de génération", date_only],
         ]
 
         for row_num, (key, value) in enumerate(data, start=4):

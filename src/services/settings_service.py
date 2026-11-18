@@ -52,16 +52,6 @@ class SettingsService:
         Validation métier.
         """
 
-        if settings.font_size < 8:
-            raise ValueError("La taille de police doit être supérieure ou égale à 8.")
-
-        if settings.theme not in (
-            "light",
-            "dark",
-            "system",
-        ):
-            raise ValueError("Le thème doit être 'light', 'dark' ou 'system'.")
-
         if not settings.currency.strip():
             raise ValueError("La devise est obligatoire.")
 

@@ -1,4 +1,5 @@
 # reports_tab.py
+import copy
 import os
 import subprocess
 from pathlib import Path
@@ -480,9 +481,17 @@ class ReportsTab(QWidget):
 
             file_path = export_dir / f"{report.estimation_nom}.pdf"
 
+            report_export = copy.copy(report)
+
+            report_export.estimated_cost = self.currency_service.convert(
+                report.estimated_cost,
+                settings.currency,
+            )
+
             output = PdfExportService.export(
-                report,
+                report_export,
                 str(file_path),
+                settings.currency,
             )
 
             QMessageBox.information(
@@ -524,7 +533,18 @@ class ReportsTab(QWidget):
 
             file_path = export_dir / f"{report.estimation_nom}.xlsx"
 
-            output = ExcelExportService.export(report, str(file_path))
+            report_export = copy.copy(report)
+
+            report_export.estimated_cost = self.currency_service.convert(
+                report.estimated_cost,
+                settings.currency,
+            )
+
+            output = ExcelExportService.export(
+                report_export,
+                str(file_path),
+                settings.currency,
+            )
 
             QMessageBox.information(
                 self, "Export Excel", ("Excel exporté :\n\n" f"{output}")

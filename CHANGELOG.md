@@ -1,6 +1,6 @@
 # Changelog
 
-Toutes les modifications notables du projet EstimateFlex seront documentées dans ce fichier.
+Toutes les modifications notables du projet EstimateFlex sont documentées dans ce fichier.
 
 Le format est inspiré de Keep a Changelog :
 https://keepachangelog.com/fr/1.1.0/
@@ -53,7 +53,7 @@ Première version publique stable d'EstimateFlex.
 - Suppression des rapports.
 - Classement des meilleures estimations.
 
-### Export
+### Exports
 
 - Export PDF des estimations.
 - Export Excel des estimations.
@@ -65,18 +65,10 @@ Première version publique stable d'EstimateFlex.
 - Interface graphique PyQt6 multi-onglets.
 - Modèles de données basés sur les dataclasses.
 - Couche Repository pour l'accès aux données.
-- Persistance des données au format JSON.
-- Journalisation centralisée (logging).
+- Persistance des données.
+- Journalisation centralisée.
 - Validation des données utilisateur.
 - Gestion structurée des erreurs applicatives.
-
-## Stabilisation
-
-- Fiabilisation du moteur d'estimation.
-- Amélioration de la gestion des projets, profils, scénarios et rapports.
-- Harmonisation du comportement de l'interface utilisateur.
-- Optimisation du chargement et de la sauvegarde des données.
-- Corrections issues des tests fonctionnels avant publication.
 
 ---
 
@@ -95,12 +87,10 @@ Première version publique stable d'EstimateFlex.
 
 ### Dashboard
 
-- Ajout de l'option « Afficher les KPI Dashboard ».
-- Ajout de l'option « Afficher les graphiques Dashboard ».
-- Masquage dynamique du bloc « Indicateurs clés ».
-- Masquage dynamique du graphique « Estimations par scénario ».
-- Masquage dynamique du graphique « Répartition des coûts ».
-- Actualisation automatique du Dashboard après modification des paramètres.
+- Affichage configurable des KPI.
+- Affichage configurable des graphiques.
+- Masquage dynamique des blocs Dashboard.
+- Actualisation automatique après modification des paramètres.
 
 ## Amélioré
 
@@ -113,24 +103,23 @@ Première version publique stable d'EstimateFlex.
 
 ### Interface
 
-- Rechargement immédiat des paramètres sans redémarrage de l'application.
+- Rechargement immédiat des paramètres sans redémarrage.
 - Synchronisation automatique des onglets après modification des paramètres.
-- Amélioration de la gestion des paramètres absents pour assurer la compatibilité avec les anciennes versions.
+- Compatibilité avec les anciens fichiers de configuration.
 
 ## Corrigé
 
 - Correction de plusieurs problèmes d'actualisation du Dashboard.
-- Correction de l'affichage des devises dans les rapports.
-- Correction du rafraîchissement des valeurs après changement de paramètres.
-- Correction de la compatibilité avec les anciens fichiers settings.json.
+- Correction de l'affichage des devises dans les Reports.
+- Correction du rafraîchissement des valeurs après modification des paramètres.
+- Correction de compatibilité ascendante du fichier settings.json.
 
 ## Tests
 
 - Ajout des tests unitaires des paramètres Dashboard.
-- Vérification des valeurs par défaut des options d'affichage.
-- Vérification de la sérialisation des paramètres Dashboard.
-- Vérification du chargement des paramètres Dashboard.
-- Vérification de la compatibilité avec les anciens fichiers settings.json.
+- Vérification des valeurs par défaut.
+- Vérification de la sérialisation.
+- Vérification du chargement des paramètres.
 
 ### Résultats
 
@@ -141,18 +130,31 @@ Première version publique stable d'EstimateFlex.
 
 ---
 
-## Roadmap V2
+# [2.1b] - 2026-11-17
 
-### Prévu
+Version de stabilisation et d'amélioration ergonomique.
 
-- Tableau de bord (Dashboard).
-- Statistiques avancées.
-- Graphiques d'analyse.
-- Gestion avancée des profils.
-- Paramètres configurables depuis l'interface.
-- Export Word.
-- Support SQLite.
-- Thèmes personnalisables.
-- Internationalisation.
+## Corrigé
 
----
+### Exports PDF et Excel
+
+- Correction de l'affichage de la devise en double dans les exports.
+- Harmonisation du contenu PDF et Excel.
+- Uniformisation des libellés :
+  - Charge (heures)
+  - Durée (jours)
+  - Coût (devise)
+  - Facteur de risque
+  - Date de génération
+- Suppression des unités redondantes dans les valeurs exportées.
+
+### Base de données
+
+- Validation des migrations SQLite.
+- Validation de la colonne `currency`.
+- Validation de la colonne `estimation_nom`.
+- Validation de la compatibilité avec les bases existantes.
+
+## Amélioré
+
+### Interface utilisateur

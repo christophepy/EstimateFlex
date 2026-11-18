@@ -84,15 +84,15 @@ class MainWindow(QMainWindow):
             self.settings_service,
         )
 
-        self.tabs.addTab(self.projects_tab, "📁 Projects")
+        self.tabs.addTab(self.projects_tab, "📁 Projets")
 
         self.tabs.addTab(self.profiles_tab, "👤 Profiles")
 
+        self.tabs.addTab(self.scenarios_tab, "📈 Scénarios")
+
         self.tabs.addTab(self.estimation_tab, "⚙️ Estimation")
 
-        self.tabs.addTab(self.scenarios_tab, "📈 Scenarios")
-
-        self.tabs.addTab(self.reports_tab, "📄 Reports")
+        self.tabs.addTab(self.reports_tab, "📄 Rapports")
 
         self.tabs.addTab(self.dashboard_tab, "Dashboard")
 
@@ -109,48 +109,6 @@ class MainWindow(QMainWindow):
 
         menubar = self.menuBar()
 
-        # ---------- FILE ----------
-
-        file_menu = menubar.addMenu("&File")
-
-        action_new = QAction("New Project", self)
-
-        action_open = QAction("Open Project", self)
-
-        action_save = QAction("Save Project", self)
-
-        action_exit = QAction("Exit", self)
-
-        action_exit.triggered.connect(self.close)
-
-        file_menu.addAction(action_new)
-        file_menu.addAction(action_open)
-        file_menu.addAction(action_save)
-        file_menu.addSeparator()
-        file_menu.addAction(action_exit)
-
-        # ---------- ESTIMATION ----------
-
-        estimation_menu = menubar.addMenu("&Estimation")
-
-        action_run = QAction("Run Estimation", self)
-
-        action_run.triggered.connect(self.run_estimation)
-
-        estimation_menu.addAction(action_run)
-
-        # ---------- REPORTS ----------
-
-        reports_menu = menubar.addMenu("&Reports")
-
-        action_export_pdf = QAction("Export PDF", self)
-
-        action_export_excel = QAction("Export Excel", self)
-
-        reports_menu.addAction(action_export_pdf)
-
-        reports_menu.addAction(action_export_excel)
-
         # ---------- TOOLS ---------
 
         tools_menu = menubar.addMenu("Outils")
@@ -162,9 +120,9 @@ class MainWindow(QMainWindow):
 
         # ---------- HELP ----------
 
-        help_menu = menubar.addMenu("&Help")
+        help_menu = menubar.addMenu("Aide")
 
-        action_about = QAction("About", self)
+        action_about = QAction("A propos", self)
 
         action_about.triggered.connect(self.show_about)
 
@@ -216,17 +174,20 @@ class MainWindow(QMainWindow):
 
         QMessageBox.about(
             self,
-            "EstimateFlex",
+            "À propos d'EstimateFlex",
             (
-                "EstimateFlex v1.0\n\n"
-                "Project Estimation Platform\n\n"
-                "Features:\n"
-                "- Cost Estimation\n"
-                "- Duration Estimation\n"
-                "- Workload Estimation\n"
-                "- Scenarios Analysis\n"
-                "- Excel Reports\n"
-                "- PDF Reports"
+                "EstimateFlex v2.1b\n\n"
+                "Outil de chiffrage et d'aide à la décision "
+                "pour les études d'ingénierie.\n\n"
+                "Fonctionnalités principales :\n"
+                "• Projets\n"
+                "• Profils\n"
+                "• Scénarios\n"
+                "• Estimations\n"
+                "• Rapports PDF / Excel\n"
+                "• Dashboard\n"
+                "• Multi-devises\n\n"
+                "Développé par Christophe Wende"
             ),
         )
 

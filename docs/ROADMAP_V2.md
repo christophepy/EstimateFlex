@@ -1,106 +1,143 @@
-# 🚀 EstimateFlex V2 \- Roadmap
+# 🚀 EstimateFlex V2 \- Roadmap Révisée
 
 ## Vision
 
-Après la validation de la V1, l'objectif de la V2 est de transformer EstimateFlex en un véritable outil professionnel d'aide au chiffrage et au pilotage des études d'ingénierie.
+EstimateFlex doit évoluer d'un outil de chiffrage vers une plateforme complète d'estimation, d'analyse et de pilotage des études d'ingénierie.
 
-L'accent sera mis sur :
+Les objectifs principaux sont :
 
-- la personnalisation ;
-- l'analyse des données ;
-- la productivité utilisateur ;
-- la préparation des futures évolutions (SQLite, Web).
+- Fiabilité des estimations
+- Productivité des chargés d'affaires
+- Analyse décisionnelle
+- Qualité logicielle
+- Préparation de la future version Web
 
 ---
 
-# ✅ Héritage V1
+# ✅ Versions réalisées
 
-## Profils
+## V1
 
-- Création de profils personnalisés
-- Modification de profils
-- Suppression de profils
-- Gestion des profils standards (Junior, Senior, Expert)
-- Validation métier de base
+### Fonctionnalités
 
-## Projets
-
-- Création de projets
-- Modification de projets
-- Suppression de projets
-- Persistance JSON
-- Contrôle d'unicité des projets
-
-## Scénarios
-
-- Création de scénarios
-- Modification de scénarios
-- Suppression de scénarios
-- Gestion des hypothèses de calcul
-
-## Estimations
-
-- Calcul automatique des charges
-- Calcul automatique des coûts
+- Gestion des profils
+- Gestion des projets
+- Gestion des scénarios
+- Calcul des estimations
 - Gestion du risque
-- Génération des résultats
+- Historique des estimations
+- Exports PDF
+- Exports Excel
 
-## Rapports
-
-- Historique complet des estimations
-- Consultation du détail d'une estimation
-- Ouverture d'une estimation existante
-- Renommage d'une estimation
-- Suppression d'une estimation
-- Export PDF
-- Export Excel
-- Ouverture directe du dossier des exports
-- Rafraîchissement de la liste
-- Tri des colonnes
-
-## Dashboard
-
-- Vue synthétique des estimations
-- Indicateurs globaux
-- Classements principaux
-- Analyse des coûts
-- Analyse des charges
-
-## Qualité logicielle
+### Qualité
 
 - Architecture modulaire
 - Typage Python
-- Ruff ✅
-- MyPy ✅
-- Pylint ≈ 9.8/10 ✅
+- Ruff
+- MyPy
+- Pylint
 
 ---
 
-# V2.1 \- Paramètres de l'application
+## ✅ V2.1a \- Paramètres applicatifs
 
-## Objectif
+### Nouveautés
 
-Centraliser les préférences utilisateur.
-
-## Nouveau menu
+Menu :
 
 Outils → Paramètres
 
-## Paramètres généraux
+### Paramètres généraux
 
 - Devise par défaut
-- Répertoire d'exports
+- Répertoire d'export
 
-## Paramètres d'affichage
+### Paramètres Dashboard
 
-- Afficher les KPI Dashboard
-- Afficher les graphiques Dashboard
+- Afficher les KPI
+- Afficher les graphiques
 
-## Bénéfices
+### Améliorations
 
-- Personnalisation de l'application
-- Centralisation de la configuration
-- Préparation du Dashboard avancé V2.2
+- Service des paramètres
+- Persistance centralisée
+- Gestion multi\-devises
+- Exports pilotés par configuration
+
+### Statut
+
+✅ Publiée et taguée GitHub (v2.1a)
+
+---
+
+# ✅ V2.1b \- Stabilisation et ergonomie
+
+## Objectif
+
+Finaliser l'expérience utilisateur et fiabiliser la version avant le développement du Dashboard avancé.
+
+### Interface utilisateur
+
+- Simplification de la fenêtre Paramètres.
+- Suppression des options non utilisées :
+    - Thème
+    - Taille de police
+- Conservation des options Dashboard :
+    - Afficher les KPI
+    - Afficher les graphiques
+
+### Navigation
+
+- Réorganisation des onglets métier :
+    1. Projets
+    2. Profils
+    3. Scénarios
+    4. Estimation
+    5. Reports
+    6. Dashboard
+
+### Menus
+
+- Simplification de la barre de menus.
+- Conservation des menus :
+    - Outils
+    - Aide
+
+### Exports
+
+- Harmonisation des exports PDF et Excel.
+- Suppression de l'affichage des devises en double.
+- Uniformisation des intitulés.
+- Uniformisation du format des nombres et des dates.
+
+### Multi\-devises
+
+- Validation du fonctionnement :
+    - EUR
+    - USD
+    - CHF
+    - GBP
+
+### Base de données
+
+- Validation des migrations SQLite.
+- Validation du schéma d'estimations.
+- Validation des redémarrages multiples.
+
+### Maintenance
+
+- Nettoyage du dépôt Git.
+- Suppression des artefacts techniques générés.
+- Mise à jour du .gitignore.
+- Mise à jour du CHANGELOG.
+
+### Statut
+
+✅ Version stabilisée
+
+✅ Prête pour le développement V2.2
+
+
 
 ---
 
@@ -108,29 +145,38 @@ Outils → Paramètres
 
 ## Objectif
 
-Faire du Dashboard un véritable outil de pilotage.
+Transformer le Dashboard en outil de pilotage.
 
-## KPI
+### KPI
 
-- Total projets
-- Total scénarios
-- Total estimations
+- Nombre de projets
+- Nombre de scénarios
+- Nombre d'estimations
 - Total heures
 - Total jours
 - Total coûts
+- Coût moyen
+- Charge moyenne
 
-## Statistiques
+### Statistiques
 
 - Top clients
 - Top projets
 - Top profils
 - Répartition des risques
+- Répartition des devises
 
-## Visualisations
+### Visualisations
 
-- Graphiques de coûts
-- Graphiques de charges
-- Évolution des estimations
+- Évolution des coûts
+- Évolution des charges
+- Répartition des profils
+- Répartition des risques
+- Tendances temporelles
+
+### Paramétrage
+
+Pilotage via les options ajoutées en V2.1a.
 
 ---
 
@@ -139,49 +185,59 @@ Faire du Dashboard un véritable outil de pilotage.
 ## Recherche
 
 - Recherche globale
-- Filtre par projet
-- Filtre par client
-- Filtre par scénario
-- Filtre par profil
-- Filtre par date
+- Filtre client
+- Filtre projet
+- Filtre scénario
+- Filtre profil
+- Filtre période
 
 ## Analyse
 
 - Comparaison d'estimations
-- Comparaison de versions
-- Historique amélioré
+- Comparaison de scénarios
+- Historique enrichi
+
+## Gestion financière
+
+- Gestion des devises par projet
+- Historisation des taux de change
+- Conservation du taux utilisé lors de la création d'une estimation
+- Recalcul optionnel avec le taux courant
+- Analyse des écarts de change
 
 ## Exports
 
-- Mise en page PDF enrichie
-- Graphiques dans Excel
+- PDF enrichis
+- Graphiques Excel
 - Export CSV
+- Export JSON
 
 ---
 
-# V2.4 \- Gestion avancée des profils
+# V2.4 \- Profils avancés
 
 ## Fonctionnalités
 
-- Bouton "Dupliquer" dans l'interface
+- Duplication d'un profil
+- Import JSON
+- Export JSON
+- Profil favori
 - Profil par défaut
-- Import profil JSON
-- Export profil JSON
 
-## Validation renforcée
+## Validation
 
-- Contrôle des bornes de productivité
-- Contrôle des taux journaliers
-- Contrôle des incohérences de configuration
+- Contrôle TJM
+- Contrôle productivité
+- Vérification des incohérences
 
 ---
 
-# V2.5 \- Gestion avancée des projets
+# V2.5 \- Projets avancés
 
 ## Fonctionnalités
 
-- Duplication de projet
-- Archivage de projet
+- Duplication projet
+- Archivage
 - Désarchivage
 - Recherche multicritère
 
@@ -193,91 +249,103 @@ Faire du Dashboard un véritable outil de pilotage.
 
 ---
 
-# V2.6 \- Migration SQLite
+# V2.6 \- Base de données
 
 ## Objectif
 
-Remplacer progressivement le stockage JSON.
+Consolider le socle de données.
 
-## Fonctionnalités
+### Fonctionnalités
 
-- Base SQLite locale
-- Migration automatique JSON → SQLite
-- Repositories compatibles SQLite
+- Migration complète SQLite
+- Migrations automatiques
+- Optimisation requêtes
+- Sauvegarde base
 
-## Avantages
+### Bénéfices
 
-- Performances
-- Recherches avancées
-- Évolutivité
-- Préparation de la version Web
+- Meilleures performances
+- Recherches rapides
+- Fondation des futures fonctionnalités
 
 ---
 
 # V2.7 \- Refactoring et qualité
 
-## UI
-
-- Mutualisation des styles Qt
-- Mutualisation des composants réutilisables
-
 ## Architecture
 
-- Découpage des écrans complexes
-- Réduction des duplications
-- Amélioration des services
+- Réduction des dépendances
+- Mutualisation des composants UI
+- Découpage des écrans volumineux
 
-## Tests
+## Couverture de tests
 
-- Tests unitaires
-- Tests des calculs
-- Tests des exports
+- Calculs
+- Repositories
+- Services
+- Exports
+- Interface utilisateur
+
+## Objectif
+
+Couverture cible ≥ 80 %
 
 ---
 
-# V3 \- Vision long terme
+# V3 \- EstimateFlex Platform
 
-## Plateforme
-
-- PostgreSQL
-- Multi\-utilisateurs
-- Gestion des rôles
-- Authentification
-
-## Connectivité
+## Web
 
 - API REST
-- Version Web
-- Synchronisation Cloud
+- Frontend Web
+- Déploiement Cloud
+
+## Collaboration
+
+- Multi\-utilisateurs
+- Gestion des rôles
+- Gestion des permissions
+
+## Base de données
+
+- PostgreSQL
 
 ## Reporting
 
-- Indicateurs entreprise
+- Tableaux de bord entreprise
 - Portefeuille projets
-- Charge globale BE
+- Plan de charge BE
+- Indicateurs de performance
 
 ---
 
 # Priorité recommandée
 
-1. Paramètres de l'application
-2. Dashboard avancé
-3. Rapports avancés
-4. Gestion avancée des profils
-5. Gestion avancée des projets
-6. SQLite
-7. Version Web
+1. V2.1b \- Stabilisation
+2. V2.2 \- Dashboard avancé
+3. V2.3 \- Rapports avancés
+4. V2.4 \- Profils avancés
+5. V2.5 \- Projets avancés
+6. V2.6 \- Consolidation SQLite
+7. V2.7 \- Qualité et refactoring
+8. V3 \- Plateforme Web
 
 ---
 
-## État actuel
+# État actuel
 
 ✅ V1 stable
 
-✅ Ruff : OK
+✅ V2.1a publiée
 
-✅ MyPy : OK
+✅ GitHub synchronisé
 
-✅ Pylint : ~9.8/10
+✅ Gestion des paramètres opérationnelle
 
-✅ Prêt pour le démarrage du développement V2
+✅ Gestion multi\-devises opérationnelle
+
+✅ Dashboard configurable
+
+✅ Dépôt nettoyé
+
+🚀 Prêt pour la phase V2.1b puis V2.2

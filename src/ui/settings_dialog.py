@@ -11,7 +11,6 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
-    QSpinBox,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -99,43 +98,18 @@ class SettingsDialog(QDialog):
         # --------------------------------------------------
 
         display_tab = QWidget()
-        display_layout = QFormLayout(display_tab)
 
-        self.theme_combo = QComboBox()
-        self.theme_combo.addItems(
-            [
-                "light",
-                "dark",
-                "system",
-            ]
-        )
-
-        self.font_size_spin = QSpinBox()
-        self.font_size_spin.setRange(8, 24)
+        display_layout = QVBoxLayout(display_tab)
 
         self.dashboard_kpis_check = QCheckBox("Afficher les KPI Dashboard")
 
         self.dashboard_charts_check = QCheckBox("Afficher les graphiques Dashboard")
 
-        display_layout.addRow(
-            "Thème",
-            self.theme_combo,
-        )
+        display_layout.addWidget(self.dashboard_kpis_check)
 
-        display_layout.addRow(
-            "Taille de police",
-            self.font_size_spin,
-        )
+        display_layout.addWidget(self.dashboard_charts_check)
 
-        display_layout.addRow(
-            "",
-            self.dashboard_kpis_check,
-        )
-
-        display_layout.addRow(
-            "",
-            self.dashboard_charts_check,
-        )
+        display_layout.addStretch()
 
         # --------------------------------------------------
         # Tabs
@@ -177,10 +151,6 @@ class SettingsDialog(QDialog):
 
         self.export_directory_edit.setText(self.settings.export_directory)
 
-        self.theme_combo.setCurrentText(self.settings.theme)
-
-        self.font_size_spin.setValue(self.settings.font_size)
-
         self.dashboard_kpis_check.setChecked(self.settings.show_dashboard_kpis)
 
         self.dashboard_charts_check.setChecked(self.settings.show_dashboard_charts)
@@ -207,8 +177,6 @@ class SettingsDialog(QDialog):
             settings = AppSettings(
                 currency=self.currency_combo.currentText(),
                 export_directory=self.export_directory_edit.text().strip(),
-                theme=self.theme_combo.currentText(),
-                font_size=self.font_size_spin.value(),
                 show_dashboard_kpis=self.dashboard_kpis_check.isChecked(),
                 show_dashboard_charts=self.dashboard_charts_check.isChecked(),
             )
